@@ -1,0 +1,4 @@
+-- Seed identities intentionally use stable UUIDs for local/demo environments only.
+INSERT INTO users(id,email) VALUES ('00000000-0000-4000-8000-000000000001','jason@example.test'),('00000000-0000-4000-8000-000000000002','matthew@example.test');
+INSERT INTO profiles(user_id,first_name,display_name,slug) VALUES ('00000000-0000-4000-8000-000000000001','Jason','Jason','jason'),('00000000-0000-4000-8000-000000000002','Matthew','Matthew','matthew');
+INSERT INTO promises(id,owner_user_id,creator_user_id,title,category,template_key,deadline,success_criteria,verification_method,state,slug,accepted_at,activated_at) VALUES ('10000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','Run my first half marathon','running','first_half','2027-06-30T23:59:59Z','Complete an official half marathon before the deadline','Official race result','active','jason-first-half',now(),now());
