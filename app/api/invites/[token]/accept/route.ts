@@ -1,0 +1,2 @@
+import { acceptPromise } from "@/lib/promises/accept-promise";
+export async function POST(request:Request,{params}:{params:Promise<{token:string}>}){void request;try{const {token}=await params;const result=await acceptPromise(token,{promises:{setState:async()=>{}},capture:async()=>{},now:()=>new Date()});return Response.json(result)}catch{return Response.json({error:"This invite is invalid or has expired."},{status:400})}}

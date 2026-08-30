@@ -1,0 +1,1 @@
+export const demoInvite={token:"jason-half-demo",backerName:"Matthew",recipientName:"Jason",promiseTitle:"Run your first half marathon",deadline:"June 30",amountMinor:10000,currency:"USD",message:"You’ve talked about doing this forever. Time to do it 😂"} as const;
