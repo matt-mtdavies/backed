@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   openGraph: { title: "BACKED", description: "Don’t just believe in someone. Back them.", siteName: "BACKED", type: "website" },
   twitter: { card: "summary", title: "BACKED", description: "Don’t just believe in someone. Back them." },
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: "/favicon.svg?v=2",
+    shortcut: "/favicon.svg?v=2",
   },
 };
 
