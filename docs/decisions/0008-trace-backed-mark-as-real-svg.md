@@ -32,11 +32,41 @@ context exactly like the old bars did. Replaced all three usages of the old
 transform, not re-derived numbers) on a black rounded-square background,
 matching the board's "APP ICON" treatment (lime B on black).
 
-The two lobes are equal size. An earlier version of this component made the
-upper lobe smaller than the lower one, reading the reference board's visual
-proportions literally — overridden by explicit human instruction mid-session
-to make them equal. Trust the direct instruction over a visual inference
-from the board on this point.
+The two lobes are equal size — an explicit human correction mid-session
+overrode an earlier version that read the board's visual proportions as
+"upper form more compact," per the master spec's own prose (§13.2). Trust
+the direct instruction over an inference from the board on this point.
+
+**The per-lobe shape geometry went through three attempts before it was
+right, and two of the three were wrong because they were eyeballed instead
+of measured:**
+1. First pass: estimated from the screenshot by eye — width:height ≈ 1.1:1
+   (too square/tall).
+2. Second pass, after the human flagged it as "too short": cross-checked
+   against the *original* CSS bar dimensions
+   (`.brandMark i{width:22px;height:9px}` ≈ 2.4:1) and trusted that instead
+   — wrong in the other direction (too flat/wide), also called out as a
+   miss.
+3. Third pass: stopped eyeballing entirely. Used `sharp` to load the actual
+   board PNG and scan raw pixel data for the dark-on-cream mark in the
+   "PRIMARY MARK" panel — the panel the spec itself names as the geometry
+   source of truth — to get the real bounding boxes: each lobe measured
+   **118×79px and 120×77px** (≈1.5:1 width:height), left-corner radius
+   ≈15px (≈19% of lobe height), gap between lobes ≈7px (≈9% of lobe
+   height). Rebuilt the path from those ratios (`150×100` per lobe, left
+   radius 19, gap 9, scaled into a `0 0 150 209` viewBox) and confirmed by
+   compositing a screenshot of the rendered result next to a crop of the
+   reference panel — both shapes, side by side, not sequential guesses.
+   Container widths in `app/globals.css` (`.brandMark`, `.brandMark.big`,
+   `.acceptMark`, plus their mobile overrides) were rescaled from their old
+   values to preserve the same rendered height under the corrected aspect
+   ratio, since those pixel widths were tuned against the wrong shape.
+
+A secondary mockup (the "Payment Badge" application further down the same
+board) was also measured and gave a different ratio (≈2.06:1) — treated as
+noise, not a second data point to reconcile, since it's a small secondary
+application of the mark rather than the panel the spec names as the
+geometry source of truth.
 
 CSS regression caught during this change, not before it shipped: removing
 `.brandMark{color:inherit!important}`'s `!important` (it looked like
@@ -68,3 +98,13 @@ these are not otherwise kept in sync automatically. Don't remove
 `!important` from `.brandMark{color:inherit}` without first checking
 whether `.wordmark span{...}` (or any future similarly generic descendant
 selector) still exists and still collides.
+
+**Process lesson, not just a mark-geometry one:** when a reference image is
+supplied as "the visual source of truth for geometry" (§13.2's own words),
+measure it — don't eyeball proportions off a rendered screenshot, and don't
+trust an existing implementation's numbers as a proxy for the reference
+just because they're already in the codebase (the old CSS bars were
+themselves an unverified approximation, not ground truth). A short script
+loading the actual image file and scanning pixel data is more reliable than
+visual estimation and took less total time than the two wrong eyeballed
+attempts it replaced.
