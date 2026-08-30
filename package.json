@@ -15,10 +15,12 @@
     "preview:upload": "wrangler versions upload",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
+    "db:migrate": "node scripts/migrate.mjs",
     "cf:types": "wrangler types"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
+    "postgres": "3.4.9",
     "react": "19.2.6",
     "react-dom": "19.2.6"
   },

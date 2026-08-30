@@ -1,6 +1,6 @@
 # BACKED engineering contract
 
-Read this file before every change. `BACKED_ALPHA_SPEC.md` is the product source of truth, except where an explicit user request supersedes it. Hosting is Cloudflare Workers through Cloudflare’s GitHub integration; never add Vercel configuration or deploy directly from an agent.
+Read this file before every change. `BACKED_MASTER_SPEC.md` is the product, brand and engineering source of truth, except where an explicit user request supersedes it. Hosting is Cloudflare Workers through Cloudflare’s GitHub integration; never add Vercel configuration or deploy directly from an agent.
 
 ## Product principles
 
@@ -16,7 +16,7 @@ All Promise and Back state changes go through service/state-machine functions. N
 
 ## Data and migrations
 
-PostgreSQL is authoritative. Migrations are forward-only, reviewed SQL in `db/migrations`; never edit an applied migration. Use UTC timestamps, UUID primary keys, constraints, and indexes. Production connects from Workers through a managed edge-compatible PostgreSQL provider or Cloudflare Hyperdrive; credentials remain secrets.
+PostgreSQL is authoritative. Migrations are forward-only, reviewed SQL in `db/migrations`; never edit an applied migration. Use UTC timestamps, UUID primary keys, constraints, and indexes. Production connects from Workers through a managed edge-compatible PostgreSQL provider or Cloudflare Hyperdrive; credentials remain secrets. Before assuming a schema or naming choice is a mistake, check `docs/decisions/` — several deliberate, documented exceptions to the rules above already exist there.
 
 ## Quality and delivery
 
