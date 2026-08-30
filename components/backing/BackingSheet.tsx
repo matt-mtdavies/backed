@@ -37,7 +37,7 @@ export function BackingSheet({ slug, achieverName }: { slug: string; achieverNam
 
   return <form className="backingForm" onSubmit={submit}>
     <p className="eyebrow">GET BEHIND {achieverName.toUpperCase()}</p>
-    <h2>How much<br/>do you believe?</h2>
+    <h1>How much<br/>do you believe?</h1>
     <label className="flowField"><span>Your name</span><input value={backerName} onChange={(event) => setBackerName(event.target.value)} placeholder="Sarah" autoComplete="name"/>{errors.backerName && <small role="alert">{errors.backerName}</small>}</label>
     <div className="amounts" aria-label="Backing amount">{[25,50,100,250].map((value) => <button aria-pressed={amount===value} onClick={() => setAmount(value)} type="button" key={value}>${value}</button>)}</div>
     <MoneyInput value={amount} currency={currency} onChange={setAmount} />
