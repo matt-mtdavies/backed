@@ -15,3 +15,4 @@ than a mistake.
 | [0005](0005-backer-name-as-identity-bridge.md) | `backerName` as a free-text identity bridge ahead of real auth |
 | [0006](0006-achiever-backer-rename-in-place.md) | Achiever/Backer terminology rename, applied in-place to migrations 0001–0002 |
 | [0007](0007-structured-targets-without-progress-computation.md) | Structured target fields added; progress computation deliberately deferred |
+| [0008](0008-trace-backed-mark-as-real-svg.md) | Trace the primary B mark as a real SVG component, not CSS bars |
