@@ -8,7 +8,7 @@ People over mechanics. Belief over punishment. Money is tangible encouragement, 
 
 ## Language and design
 
-Use `Promise`, `Back`, `BackingCommitment`, `PaymentEvent`, and `Proof` consistently. Never use donor, donation, wager, bet, odds, pot, jackpot, fundraiser, win, loser, earned, influencer, or follower count. Keep BACKED Black/Bone/Graphite dominant; reserve Lime for money, primary actions, progress, and success. Mobile is first-class. Use the replaceable `BackedLogo`; the mark is not final. Meet WCAG AA, preserve visible focus, semantic structure, large tap targets, and reduced motion.
+Use `Promise`, `Back`, `BackingCommitment`, `PaymentEvent`, and `Proof` consistently. Never use donor, donation, wager, bet, odds, pot, jackpot, fundraiser, win, loser, earned, influencer, or follower count. The approved board uses Black `#0A0C0B`, Bone `#F4F3ED`, Signal `#C8FF32`, and Graphite `#222522`; Signal is reserved for money, primary actions, progress, and compact punctuation. Satoshi Variable is the preferred typeface with Geist/Inter fallback. The approved primary mark is the stacked two-part B resolving into a Signal period; keep it replaceable and preserve its clear space. Mobile is first-class. Meet WCAG AA, preserve visible focus, semantic structure, large tap targets, and reduced motion.
 
 ## Domain discipline
 
