@@ -15,11 +15,20 @@ const NOT_YET_LIVE_STATES = new Set(["proposed", "declined", "expired", "cancell
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   if (slug === demoPromise.slug) {
-    return { title: "Jason is running his first half marathon | BACKED", description: "$1,100 behind Jason. 5 people are behind him.", robots: { index: false, follow: false }, openGraph: { title: "Jason is running his first half marathon", description: "$1,100 behind Jason. 5 people are behind him." }, twitter: { card: "summary_large_image", title: "Jason is running his first half marathon", description: "$1,100 behind Jason. 5 people are behind him." } };
+    return { title: "Jason is running his first half marathon | BACKED", description: "$1,100 behind Jason. 5 people are behind him.", robots: { index: false, follow: false }, alternates: { canonical: `/p/${slug}` }, openGraph: { title: "Jason is running his first half marathon", description: "$1,100 behind Jason. 5 people are behind him." }, twitter: { card: "summary_large_image", title: "Jason is running his first half marathon", description: "$1,100 behind Jason. 5 people are behind him." } };
   }
   const promise = await getPromiseBySlug(slug, { promises: createPromiseViewRepository(getDb()) });
   if (!promise) return { title: "Promise | BACKED" };
-  return { title: `${promise.achieverName} · ${promise.title} | BACKED`, description: `${promise.backers.length} people are behind ${promise.achieverName}.`, robots: { index: false, follow: false } };
+  const title = `${promise.achieverName} · ${promise.title}`;
+  const description = `${promise.backers.length} ${promise.backers.length === 1 ? "person is" : "people are"} behind ${promise.achieverName}.`;
+  return {
+    title: `${title} | BACKED`,
+    description,
+    robots: { index: false, follow: false },
+    alternates: { canonical: `/p/${slug}` },
+    openGraph: { title, description },
+    twitter: { card: "summary_large_image", title, description },
+  };
 }
 
 export default async function PromisePage({ params }: { params: Promise<{ slug: string }> }) {
