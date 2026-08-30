@@ -16,7 +16,7 @@ All Promise and Back state changes go through service/state-machine functions. N
 
 ## Data and migrations
 
-PostgreSQL is authoritative. Migrations are forward-only, reviewed SQL in `db/migrations`; never edit an applied migration. Use UTC timestamps, UUID primary keys, constraints, and indexes. Production connects from Workers through a managed edge-compatible PostgreSQL provider or Cloudflare Hyperdrive; credentials remain secrets.
+PostgreSQL is authoritative. Migrations are forward-only, reviewed SQL in `db/migrations`; never edit an applied migration. Use UTC timestamps, UUID primary keys, constraints, and indexes. Production connects from Workers through a managed edge-compatible PostgreSQL provider or Cloudflare Hyperdrive; credentials remain secrets. Before assuming a schema or naming choice is a mistake, check `docs/decisions/` — several deliberate, documented exceptions to the rules above already exist there.
 
 ## Quality and delivery
 
