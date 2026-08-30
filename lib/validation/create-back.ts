@@ -2,13 +2,13 @@ import { promiseTemplates, type CreateBackInput } from "@/lib/backs/model";
 import { supportedCurrencies } from "@/lib/money/currency";
 
 export type ValidationErrors = Partial<Record<keyof CreateBackInput, string>>;
-const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const phone = /^\+?[\d\s().-]{8,}$/;
+export const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const phonePattern = /^\+?[\d\s().-]{8,}$/;
 
 export function validateCreateBack(input: CreateBackInput): ValidationErrors {
   const errors: ValidationErrors = {};
   if (input.recipientFirstName.trim().length < 2) errors.recipientFirstName = "Enter their first name.";
-  if (!email.test(input.recipientContact) && !phone.test(input.recipientContact)) errors.recipientContact = "Enter a valid email or mobile number.";
+  if (!emailPattern.test(input.recipientContact) && !phonePattern.test(input.recipientContact)) errors.recipientContact = "Enter a valid email or mobile number.";
   if (!promiseTemplates.some((item) => item.key === input.templateKey)) errors.templateKey = "Choose a Promise.";
   if (input.promiseTitle.trim().length < 5) errors.promiseTitle = "Describe what you believe they can do.";
   if (!input.deadline || new Date(`${input.deadline}T23:59:59Z`) <= new Date()) errors.deadline = "Choose a future deadline.";

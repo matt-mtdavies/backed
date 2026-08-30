@@ -15,6 +15,10 @@ npm run dev
 
 Use `npm run check` for type checking, linting, unit tests, and the production build.
 
+The dev server runs on the Cloudflare Workers runtime, so `DATABASE_URL` must reach it as a Worker binding, not as a Next-style env var. Copy `.dev.vars.example` to `.dev.vars` and point it at a Postgres instance to exercise the Back and Invite flows locally; without it, `/api/backs` and invite acceptance fail with "DATABASE_URL is not configured."
+
+Run `npm run db:migrate` (`db/migrations/*.sql` applied in order via `psql "$DATABASE_URL"`) against a fresh database before using the app. Migrations are hand-written, forward-only SQL — `db/schema.ts` is a manually kept-in-sync typed mirror for Drizzle queries, not the source of truth, and `drizzle-kit generate` is not used.
+
 ## Architecture
 
 - Next.js-compatible App Router on Cloudflare’s recommended vinext/Vite Workers architecture

@@ -1,26 +1,31 @@
-import { createBack, type BackRecord, type InviteRecord } from "@/lib/backs/create-back";
+import { createBack } from "@/lib/backs/create-back";
 import type { CreateBackInput } from "@/lib/backs/model";
 import { AlphaMockPaymentProvider } from "@/lib/payments/provider";
 import { CreateBackValidationError } from "@/lib/validation/create-back";
+import { getDb } from "@/lib/db/client";
+import { createUserRepository, createPromiseRepository, createBackRepository, createInviteWriteRepository } from "@/lib/db/create-back-repositories";
 
-const backs: BackRecord[] = [];
-const invites: InviteRecord[] = [];
 const encoder = new TextEncoder();
 const hex = (buffer: ArrayBuffer) => [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 
 export async function POST(request: Request) {
   try {
     const input = await request.json() as CreateBackInput;
-    const result = await createBack(input, {
-      backs: { insert: async (record) => { backs.push(record); } },
-      invites: { insert: async (record) => { invites.push(record); } },
-      payments: new AlphaMockPaymentProvider(),
-      analytics: { capture: async () => {} },
-      id: () => crypto.randomUUID(),
-      token: () => `${crypto.randomUUID()}${crypto.randomUUID()}`.replaceAll("-", ""),
-      hash: async (value) => hex(await crypto.subtle.digest("SHA-256", encoder.encode(value))),
-      now: () => new Date(),
-    });
+    const db = getDb();
+    const result = await db.transaction((tx) =>
+      createBack(input, {
+        users: createUserRepository(tx),
+        promises: createPromiseRepository(tx),
+        backs: createBackRepository(tx),
+        invites: createInviteWriteRepository(tx),
+        payments: new AlphaMockPaymentProvider(),
+        analytics: { capture: async () => {} },
+        id: () => crypto.randomUUID(),
+        token: () => `${crypto.randomUUID()}${crypto.randomUUID()}`.replaceAll("-", ""),
+        hash: async (value) => hex(await crypto.subtle.digest("SHA-256", encoder.encode(value))),
+        now: () => new Date(),
+      })
+    );
     return Response.json(result, { status: 201 });
   } catch (error) {
     if (error instanceof CreateBackValidationError) return Response.json({ errors: error.errors }, { status: 422 });
