@@ -35,6 +35,7 @@ function makeDeps(overrides: { existingUser?: { id: string } } = {}) {
 describe("Create Back validation",()=>{
   it("accepts the supported happy path",()=>expect(validateCreateBack(valid)).toEqual({}));
   it("links accessible errors to invalid fields",()=>{const errors=validateCreateBack({...valid,achieverContact:"nope",amountMinor:0,deadline:"2020-01-01",backerName:"x"});expect(errors.achieverContact).toBeTruthy();expect(errors.amountMinor).toBeTruthy();expect(errors.deadline).toBeTruthy();expect(errors.backerName).toBeTruthy()});
+  it("rejects titles and descriptions long enough to break the promise page's display",()=>{const errors=validateCreateBack({...valid,promiseTitle:"x".repeat(101),successCriteria:"x".repeat(401),verificationMethod:"x".repeat(201)});expect(errors.promiseTitle).toBeTruthy();expect(errors.successCriteria).toBeTruthy();expect(errors.verificationMethod).toBeTruthy()});
 });
 
 describe("currency defaults",()=>{it("prefers profile currency over locale",()=>{expect(resolveCurrency("CAD","en-US")).toBe("CAD")});it("uses locale until a profile exists",()=>{expect(resolveCurrency(undefined,"en-CA")).toBe("CAD");expect(resolveCurrency(undefined,"en-US")).toBe("USD")})});
