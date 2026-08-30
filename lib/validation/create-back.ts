@@ -1,4 +1,5 @@
 import { promiseTemplates, type CreateBackInput } from "@/lib/backs/model";
+import { supportedCurrencies } from "@/lib/money/currency";
 
 export type ValidationErrors = Partial<Record<keyof CreateBackInput, string>>;
 const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -14,6 +15,7 @@ export function validateCreateBack(input: CreateBackInput): ValidationErrors {
   if (input.successCriteria.trim().length < 10) errors.successCriteria = "Make success clear and measurable.";
   if (input.verificationMethod.trim().length < 5) errors.verificationMethod = "Explain how the Promise will be verified.";
   if (!Number.isInteger(input.amountMinor) || input.amountMinor < 500 || input.amountMinor > 100_000) errors.amountMinor = "Choose an amount from $5 to $1,000.";
+  if (!supportedCurrencies.includes(input.currency)) errors.currency = "Choose a supported currency.";
   if ((input.message?.length ?? 0) > 280) errors.message = "Keep your message under 280 characters.";
   return errors;
 }

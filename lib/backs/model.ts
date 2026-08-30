@@ -6,6 +6,7 @@ export const promiseTemplates = [
   { key: "custom", label: "Something else" },
 ] as const;
 
+import type { SupportedCurrency } from "@/lib/money/currency";
 export type CreateBackInput = {
   recipientFirstName: string;
   recipientLastName?: string;
@@ -16,7 +17,7 @@ export type CreateBackInput = {
   successCriteria: string;
   verificationMethod: string;
   amountMinor: number;
-  currency: "USD";
+  currency: SupportedCurrency;
   message?: string;
 };
 
