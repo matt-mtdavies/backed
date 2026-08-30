@@ -1,25 +1,26 @@
 import type { SupportedCurrency } from "@/lib/money/currency";
 
 export type InviteView = {
-  recipientName: string;
+  achieverName: string;
   promiseSlug: string;
   promiseTitle: string;
   deadline: string;
   amountMinor: number;
   currency: SupportedCurrency;
   message: string | null;
-  backerName: string | null;
+  backerName: string;
   accepted: boolean;
 };
 
 type InviteRow = {
-  recipientName: string;
+  achieverName: string;
   promiseSlug: string;
   promiseTitle: string;
   deadline: Date;
   amountMinor: number;
   currency: string;
   message: string | null;
+  backerName: string;
   acceptedAt: Date | null;
   expiresAt: Date;
   revokedAt: Date | null;
@@ -36,14 +37,14 @@ export async function getInviteByToken(token: string, deps: { hash: (token: stri
   const accepted = row.acceptedAt !== null;
   if (!accepted && row.expiresAt <= deps.now()) return null;
   return {
-    recipientName: row.recipientName,
+    achieverName: row.achieverName,
     promiseSlug: row.promiseSlug,
     promiseTitle: row.promiseTitle,
     deadline: row.deadline.toLocaleDateString("en-US", { month: "long", day: "numeric" }),
     amountMinor: row.amountMinor,
     currency: row.currency as SupportedCurrency,
     message: row.message,
-    backerName: null,
+    backerName: row.backerName,
     accepted,
   };
 }

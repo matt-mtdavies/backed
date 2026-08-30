@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
 export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   if (token === demoInvite.token) {
-    const invite = { recipientName: demoInvite.recipientName, promiseSlug: demoInvite.promiseSlug, promiseTitle: demoInvite.promiseTitle, deadline: demoInvite.deadline, amountMinor: demoInvite.amountMinor, currency: demoInvite.currency, message: demoInvite.message, backerName: demoInvite.backerName, accepted: false };
+    const invite = { achieverName: demoInvite.achieverName, promiseSlug: demoInvite.promiseSlug, promiseTitle: demoInvite.promiseTitle, deadline: demoInvite.deadline, amountMinor: demoInvite.amountMinor, currency: demoInvite.currency, message: demoInvite.message, backerName: demoInvite.backerName, accepted: false };
     return <ReceiveBack invite={invite} token={token} />;
   }
 

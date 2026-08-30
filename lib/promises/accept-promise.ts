@@ -48,10 +48,11 @@ export async function acceptPromise(inviteToken: string, deps: Dependencies) {
   const accepted = transitionPromise(invite.promiseState, "accepted");
   const active = transitionPromise(accepted, "active");
   const committed = transitionBack(invite.backState, "committed");
+  const activeBack = transitionBack(committed, "active");
   const timestamp = now.toISOString();
 
   await deps.promises.setState({ promiseId: invite.promiseId, state: active, acceptedAt: timestamp, activatedAt: timestamp });
-  await deps.backs.setState({ backId: invite.backId, state: committed });
+  await deps.backs.setState({ backId: invite.backId, state: activeBack });
   await deps.invites.markAccepted(invite.inviteId, timestamp);
   await deps.capture("promise_accepted", { promise_id: invite.promiseId, back_id: invite.backId });
 

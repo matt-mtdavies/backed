@@ -1,6 +1,7 @@
 import type { PaymentProvider } from "@/lib/payments/provider";
 import { requiresManualReview } from "@/lib/moderation/rules";
-import { assertValidCreateBack, emailPattern } from "@/lib/validation/create-back";
+import { assertValidCreateBack } from "@/lib/validation/create-back";
+import { emailPattern } from "@/lib/validation/shared";
 import { buildPromiseSlug } from "@/lib/promises/slug";
 import { promiseTemplates, type CreateBackInput, type CreateBackResult, type NewUserRecord, type NewPromiseRecord, type NewBackRecord, type NewInviteRecord } from "./model";
 
@@ -32,33 +33,36 @@ export async function createBack(input: CreateBackInput, deps: Dependencies): Pr
   assertValidCreateBack(input);
   const createdAt = deps.now().toISOString();
 
-  const existingUser = await deps.users.findByContact(input.recipientContact);
-  const recipientUserId = existingUser?.id ?? deps.id();
+  const existingUser = await deps.users.findByContact(input.achieverContact);
+  const achieverUserId = existingUser?.id ?? deps.id();
   if (!existingUser) {
-    const isEmail = emailPattern.test(input.recipientContact);
+    const isEmail = emailPattern.test(input.achieverContact);
     await deps.users.insert({
-      id: recipientUserId,
-      email: isEmail ? input.recipientContact : undefined,
-      phone: isEmail ? undefined : input.recipientContact,
-      firstName: input.recipientFirstName,
-      lastName: input.recipientLastName,
-      displayName: [input.recipientFirstName, input.recipientLastName].filter(Boolean).join(" "),
+      id: achieverUserId,
+      email: isEmail ? input.achieverContact : undefined,
+      phone: isEmail ? undefined : input.achieverContact,
+      firstName: input.achieverFirstName,
+      lastName: input.achieverLastName,
+      displayName: [input.achieverFirstName, input.achieverLastName].filter(Boolean).join(" "),
     });
   }
 
   const promiseId = deps.id();
-  const category = promiseTemplates.find((item) => item.key === input.templateKey)?.category ?? "general";
+  const template = promiseTemplates.find((item) => item.key === input.templateKey);
   await deps.promises.insert({
     id: promiseId,
-    ownerUserId: recipientUserId,
-    creatorUserId: null,
+    achieverUserId,
+    createdByUserId: null,
     title: input.promiseTitle,
-    category,
+    category: template?.category ?? "general",
     templateKey: input.templateKey,
+    targetType: template?.targetType ?? null,
+    targetValue: template?.targetValue ?? null,
+    targetUnit: template?.targetUnit ?? null,
     deadline: `${input.deadline}T23:59:59Z`,
     successCriteria: input.successCriteria,
     verificationMethod: input.verificationMethod,
-    slug: buildPromiseSlug(input.recipientFirstName, promiseId),
+    slug: buildPromiseSlug(input.achieverFirstName, promiseId),
     state: "proposed",
     createdAt,
   });
@@ -68,7 +72,8 @@ export async function createBack(input: CreateBackInput, deps: Dependencies): Pr
     id: backId,
     promiseId,
     backerUserId: null,
-    recipientUserId,
+    backerName: input.backerName,
+    achieverUserId,
     amountMinor: input.amountMinor,
     currency: input.currency,
     message: input.message,

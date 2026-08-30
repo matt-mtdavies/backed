@@ -60,13 +60,14 @@ export function createInviteViewRepository(db: DbOrTx): InviteViewRepository {
     async findByTokenHash(tokenHash) {
       const [row] = await db
         .select({
-          recipientName: profiles.displayName,
+          achieverName: profiles.displayName,
           promiseSlug: promises.slug,
           promiseTitle: promises.title,
           deadline: promises.deadline,
           amountMinor: backs.amountMinor,
           currency: backs.currency,
           message: backs.message,
+          backerName: backs.backerName,
           acceptedAt: invites.acceptedAt,
           expiresAt: invites.expiresAt,
           revokedAt: invites.revokedAt,
@@ -74,7 +75,7 @@ export function createInviteViewRepository(db: DbOrTx): InviteViewRepository {
         .from(invites)
         .innerJoin(promises, eq(invites.promiseId, promises.id))
         .innerJoin(backs, eq(invites.backId, backs.id))
-        .innerJoin(profiles, eq(promises.ownerUserId, profiles.userId))
+        .innerJoin(profiles, eq(promises.achieverUserId, profiles.userId))
         .where(eq(invites.tokenHash, tokenHash))
         .limit(1);
       return row ?? null;

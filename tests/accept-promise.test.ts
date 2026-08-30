@@ -27,7 +27,7 @@ describe("acceptPromise",()=>{
     const result = await acceptPromise("valid-demo-token", deps);
     expect(result.state).toBe("active");
     expect(setPromiseState).toHaveBeenCalledWith(expect.objectContaining({ promiseId:"promise-1", state:"active", acceptedAt:"2026-08-30T18:00:00.000Z" }));
-    expect(setBackState).toHaveBeenCalledWith({ backId:"back-1", state:"committed" });
+    expect(setBackState).toHaveBeenCalledWith({ backId:"back-1", state:"active" });
     expect(markAccepted).toHaveBeenCalledWith("invite-1", "2026-08-30T18:00:00.000Z");
     expect(capture).toHaveBeenCalledWith("promise_accepted", { promise_id:"promise-1", back_id:"back-1" });
   });
