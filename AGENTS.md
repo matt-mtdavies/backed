@@ -1,6 +1,6 @@
 # BACKED engineering contract
 
-Read this file before every change. `BACKED_ALPHA_SPEC.md` is the product source of truth, except where an explicit user request supersedes it. Hosting is Cloudflare Workers through Cloudflare’s GitHub integration; never add Vercel configuration or deploy directly from an agent.
+Read this file before every change. `BACKED_MASTER_SPEC.md` is the product, brand and engineering source of truth, except where an explicit user request supersedes it. Hosting is Cloudflare Workers through Cloudflare’s GitHub integration; never add Vercel configuration or deploy directly from an agent.
 
 ## Product principles
 
