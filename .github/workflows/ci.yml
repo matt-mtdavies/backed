@@ -12,3 +12,42 @@ jobs:
         with: { node-version: 22, cache: npm }
       - run: npm ci
       - run: npm run check
+
+  a11y:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: backed
+          POSTGRES_PASSWORD: backed
+          POSTGRES_DB: backed
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U backed"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgres://backed:backed@localhost:5432/backed
+      ADMIN_TOKEN: ci-admin-token
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run db:migrate
+      - run: npm run db:seed
+      - run: npx playwright install --with-deps chromium
+      - name: Write .dev.vars for vinext dev
+        run: |
+          echo "DATABASE_URL=$DATABASE_URL" > .dev.vars
+          echo "ADMIN_TOKEN=$ADMIN_TOKEN" >> .dev.vars
+      - name: Start vinext dev in background
+        run: nohup npm run dev > vinext-dev.log 2>&1 &
+      - run: npx wait-on http://127.0.0.1:3000 --timeout 60000
+      - run: npm run a11y:audit
+      - name: Show vinext dev log on failure
+        if: failure()
+        run: cat vinext-dev.log || true
