@@ -43,7 +43,7 @@ export function AdminProofReview() {
         <label>REVIEW NOTE<textarea value={note} onChange={event=>setNote(event.target.value)} maxLength={500}/></label>
         {error && <p className="formError" role="alert">{error}</p>}
         {result && <p className="adminResult" role="status">Proof approved. {result.payableBacks} Back {result.payableBacks === 1 ? "is" : "are"} now payable.</p>}
-        <div className="adminProofActions"><Link href="/p/jason-first-half">VIEW PROMISE <Arrow/></Link><button className="button primary" disabled={busy || Boolean(result)} onClick={approve}>{busy ? "APPROVING..." : result ? "APPROVED" : "APPROVE PROOF"}<Arrow/></button></div>
+        <div className="adminProofActions"><Link href={result ? "/admin/releases" : "/p/jason-first-half"}>{result ? "RELEASE BACKING" : "VIEW PROMISE"} <Arrow/></Link><button className="button primary" disabled={busy || Boolean(result)} onClick={approve}>{busy ? "APPROVING..." : result ? "APPROVED" : "APPROVE PROOF"}<Arrow/></button></div>
       </article>
     </section>
   </main>;
