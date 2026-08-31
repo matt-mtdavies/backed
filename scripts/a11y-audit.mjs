@@ -7,7 +7,11 @@ import { existsSync } from "node:fs";
 import { chromium } from "playwright";
 import AxeBuilder from "@axe-core/playwright";
 
-const BASE = process.env.BASE_URL ?? "http://127.0.0.1:3000";
+// vinext dev's Node HTTP listener binds to whatever `dns.lookup("localhost")`
+// returns for this host, which some runners (this repo's GitHub Actions
+// runner included) resolve to the IPv6 loopback [::1] only, not 127.0.0.1 —
+// so default to "localhost", not the IPv4 literal, or connections are refused.
+const BASE = process.env.BASE_URL ?? "http://localhost:3000";
 // Some sandboxes pre-install Chromium outside Playwright's normal cache dir.
 // Use it when present; otherwise fall back to Playwright's own resolution
 // (what `npx playwright install` sets up in CI).
