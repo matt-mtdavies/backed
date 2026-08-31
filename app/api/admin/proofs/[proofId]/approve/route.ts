@@ -1,8 +1,10 @@
 import { approveProof, ProofNotFoundError, ProofNotReviewableError } from "@/lib/proofs/review-proof";
 import { getDb } from "@/lib/db/client";
 import { createBackPayableRepository, createPaymentEventRepository, createProofReviewLookupRepository, createPromiseCompletionRepository, createVerificationRepository } from "@/lib/db/review-proof-repositories";
+import { isAuthorizedAdmin } from "@/lib/auth/admin";
 
 export async function POST(request: Request, { params }: { params: Promise<{ proofId: string }> }) {
+  if (!isAuthorizedAdmin(request)) return Response.json({ error: "Unauthorized." }, { status: 401 });
   try {
     const { proofId } = await params;
     const body = await request.json().catch(() => ({})) as { note?: string };

@@ -4,8 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { BackedLogo } from "@/components/brand/BackedLogo";
 import { Arrow } from "@/components/icons/Arrow";
+import { AdminTokenGate, useAdminToken } from "@/components/admin/AdminTokenGate";
 
 export function AdminReleaseBacking() {
+  const { token, save } = useAdminToken();
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{ providerReference: string; releasedAt: string } | null>(null);
   const [error, setError] = useState("");
@@ -13,7 +15,7 @@ export function AdminReleaseBacking() {
   async function release() {
     setBusy(true);
     setError("");
-    const response = await fetch("/api/admin/backs/20000000-0000-4000-8000-000000000001/release", { method: "POST" });
+    const response = await fetch("/api/admin/backs/20000000-0000-4000-8000-000000000001/release", { method: "POST", headers: { "x-admin-token": token ?? "" } });
     const body = await response.json() as { providerReference?: string; releasedAt?: string; error?: string };
     setBusy(false);
     if (!response.ok) {
@@ -22,6 +24,9 @@ export function AdminReleaseBacking() {
     }
     setResult({ providerReference: body.providerReference ?? "alpha", releasedAt: body.releasedAt ?? new Date().toISOString() });
   }
+
+  if (token === undefined) return null;
+  if (!token) return <AdminTokenGate onSubmit={save}/>;
 
   return <main className="adminReleasePage">
     <header><BackedLogo/><span>INTERNAL ALPHA</span></header>

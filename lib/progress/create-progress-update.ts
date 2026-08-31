@@ -1,6 +1,8 @@
+import type { PromiseState } from "@/lib/state-machines/promise";
+
 export type ProgressUpdateInput = {
   promiseId: string;
-  promiseState: "active" | "proof_pending" | "completed" | "failed" | "expired";
+  promiseState: PromiseState;
   headline: string;
   caption?: string;
   distanceKm?: number;

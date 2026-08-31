@@ -24,6 +24,8 @@ TypeScript is strict. Add focused unit tests for transitions, money, validation,
 
 `npm run check` passing is necessary but not sufficient for anything touching routing, `next/link`, client components, or the build toolchain (`vinext`, `vite`, `@vitejs/plugin-rsc`, `@cloudflare/vite-plugin`): also run `npm run build && npx vinext start` and drive it with a real click (`page.click`, not `page.goto`) before trusting it. `vinext dev` and the bundled production build exercise genuinely different code paths — one outage already shipped and passed every static check the whole time it was live. See [ADR-0009](docs/decisions/0009-verify-against-production-build-not-just-dev.md).
 
+Any new or changed route that reads or writes the database needs a real `curl` (or click-through) against `vinext dev` with `DATABASE_URL` set, confirmed with a direct `SELECT` — not just a passing HTTP status and green unit tests. Two routes once shipped fully wired-looking unit tests while the route itself silently never touched the database at all; see [ADR-0014](docs/decisions/0014-exercise-new-routes-against-real-postgres-before-merge.md).
+
 ## Forbidden scope
 
 No discovery feed, leaderboards, points, streaks, badges, public reputation score, AI chatbot, sponsor marketplace, crypto, speculative payment custody, or shame/failure mechanics. Do not introduce heavy animation or WebGL for the Wall of Belief.
