@@ -14,6 +14,10 @@ const pages = [
   { name: "promise-demo", path: "/p/jason-first-half" },
   { name: "promise-back-sheet", path: "/p/jason-first-half/back" },
   { name: "invite-pending", path: "/invite/jason-half-demo" },
+  { name: "make-a-promise", path: "/promise" },
+  { name: "post-progress", path: "/p/jason-first-half/progress/new" },
+  { name: "submit-proof", path: "/p/jason-first-half/proof" },
+  { name: "admin-token-gate", path: "/admin/proofs" },
 ];
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
@@ -52,6 +56,16 @@ await page.goto(BASE + "/p/jason-first-half", { waitUntil: "networkidle" });
 await page.click(".portrait");
 await page.waitForTimeout(150);
 await report("promise-demo-wall-detail-open (/p/jason-first-half, backer detail expanded)");
+
+if (process.env.ADMIN_TOKEN) {
+  await page.goto(BASE + "/admin/proofs", { waitUntil: "networkidle" });
+  await page.fill(".adminTokenGate input", process.env.ADMIN_TOKEN);
+  await page.click(".adminTokenGate button");
+  await page.waitForTimeout(300);
+  await report("admin-proof-review (/admin/proofs, past token gate)");
+} else {
+  console.log("- admin-proof-review skipped (set ADMIN_TOKEN to include it)");
+}
 
 await browser.close();
 console.log(totalViolations === 0 ? "\nAll pages clean." : `\n${totalViolations} total violation(s).`);
