@@ -19,3 +19,4 @@ than a mistake.
 | [0009](0009-verify-against-production-build-not-just-dev.md) | Verify navigation/interaction against `vinext build` + `vinext start`, not just `vinext dev` |
 | [0010](0010-proof-submission-enters-manual-review-only.md) | Proof submission enters manual review only |
 | [0011](0011-proof-approval-completes-promise-but-does-not-release-backing.md) | Proof approval completes Promise but does not release backing |
+| [0012](0012-alpha-release-records-provider-event-not-custody.md) | Alpha release records provider event, not custody |
