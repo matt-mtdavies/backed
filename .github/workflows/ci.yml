@@ -45,9 +45,22 @@ jobs:
           echo "DATABASE_URL=$DATABASE_URL" > .dev.vars
           echo "ADMIN_TOKEN=$ADMIN_TOKEN" >> .dev.vars
       - name: Start vinext dev in background
+        env:
+          WRANGLER_WRITE_LOGS: "true"
+          WRANGLER_LOG: debug
         run: nohup npm run dev > vinext-dev.log 2>&1 &
-      - run: npx wait-on http://127.0.0.1:3000 --timeout 180000
+      - run: npx wait-on http://127.0.0.1:3000 --timeout 180000 --verbose
       - run: npm run a11y:audit
-      - name: Show vinext dev log on failure
+      - name: Show diagnostics on failure
         if: failure()
-        run: cat vinext-dev.log || true
+        run: |
+          echo "--- vinext-dev.log ---"
+          cat vinext-dev.log || true
+          echo "--- .wrangler/wrangler.log ---"
+          cat .wrangler/wrangler.log || true
+          echo "--- listening sockets ---"
+          ss -ltnp || true
+          echo "--- curl 127.0.0.1:3000 ---"
+          curl -v --max-time 5 http://127.0.0.1:3000 || true
+          echo "--- curl localhost:3000 ---"
+          curl -v --max-time 5 http://localhost:3000 || true
