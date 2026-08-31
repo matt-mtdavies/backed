@@ -22,6 +22,8 @@ PostgreSQL is authoritative. Migrations are forward-only, reviewed SQL in `db/mi
 
 TypeScript is strict. Add focused unit tests for transitions, money, validation, and moderation; integration tests for services; Playwright coverage for core flows as they become live. Run typecheck, lint, unit tests, and build before handoff. The initial bootstrap may go directly to `main`. Every later change uses feature branch → pull request → Cloudflare preview → merge to `main` → production. Never deploy directly from Codex.
 
+`npm run check` passing is necessary but not sufficient for anything touching routing, `next/link`, client components, or the build toolchain (`vinext`, `vite`, `@vitejs/plugin-rsc`, `@cloudflare/vite-plugin`): also run `npm run build && npx vinext start` and drive it with a real click (`page.click`, not `page.goto`) before trusting it. `vinext dev` and the bundled production build exercise genuinely different code paths — one outage already shipped and passed every static check the whole time it was live. See [ADR-0009](docs/decisions/0009-verify-against-production-build-not-just-dev.md).
+
 ## Forbidden scope
 
 No discovery feed, leaderboards, points, streaks, badges, public reputation score, AI chatbot, sponsor marketplace, crypto, speculative payment custody, or shame/failure mechanics. Do not introduce heavy animation or WebGL for the Wall of Belief.
