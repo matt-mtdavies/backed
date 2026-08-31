@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800;900&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #c8ff32; text-decoration: none; }
+    a:hover { color: #f4f3ed; }
+    @media (prefers-reduced-motion: no-preference) {
+      .rise { opacity: 0; animation: riseIn .9s cubic-bezier(.2,.8,.2,1) forwards; }
+      .signal { opacity: 0; animation: signalIn .5s cubic-bezier(.2,.8,.2,1) 1.15s forwards; }
+    }
+    @keyframes riseIn { from { opacity: 0; transform: translateY(34px); } to { opacity: 1; transform: none; } }
+    @keyframes signalIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+  </style>
+</helmet>
+
+<div style="width: 1440px; background: #0a0c0b; color: #f4f3ed; font-family: Geist, Arial, sans-serif; overflow: hidden">
+
+  <nav style="height: 82px; padding: 0 84px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333733">
+    <span style="display: inline-flex; align-items: center; gap: 9px">
+      <svg viewBox="0 0 150 209" width="31" height="43" fill="currentColor" aria-hidden="true" focusable="false" style="display: block">
+        <path d="M19,0 L100,0 A50,50 0 0 1 100,100 L19,100 A19,19 0 0 1 0,81 L0,19 A19,19 0 0 1 19,0 Z" />
+        <path d="M19,109 L100,109 A50,50 0 0 1 100,209 L19,209 A19,19 0 0 1 0,190 L0,128 A19,19 0 0 1 19,109 Z" />
+      </svg>
+      <b style="font-size: 14px; font-weight: 900; letter-spacing: .27em">BACKED</b>
+      <em style="color: #c8ff32; font-style: normal; margin-left: -8px; font-size: 14px; font-weight: 900">.</em>
+    </span>
+    <span style="font-size: 11px; font-weight: 800; letter-spacing: .13em; color: #a5aaa4">A PROMISE YOU BACKED</span>
+  </nav>
+
+  <main style="position: relative; padding: 235px 84px 92px">
+
+    <div style="position: absolute; inset: 0 0 auto; height: 470px; z-index: 0; display: flex; align-items: flex-start; justify-content: center">
+      <div class="rise" style="position: relative; z-index: 11; flex: 0 0 auto; width: 200px; height: 414px; margin-top: 30px; background: #d7d8cf; border-radius: 100px 100px 10px 10px; color: #0a0c0b; display: flex; flex-direction: column; align-items: center; gap: 9px; padding-top: 28px; animation-delay: .08s">
+        <b style="font-size: 52px; font-weight: 900; letter-spacing: -.04em; line-height: 1">M</b>
+        <span style="font-size: 10.4px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em">MATTHEW</span>
+        <span style="margin-top: 6px; background: #0a0c0b; color: #f4f3ed; padding: 5px 10px; font-size: 9.5px; font-weight: 800; letter-spacing: .14em">YOU</span>
+      </div>
+      <div class="rise" style="position: relative; z-index: 6; flex: 0 0 auto; width: 178px; height: 368px; margin-top: 45px; margin-left: -26px; background: #8e948e; border-radius: 89px 89px 10px 10px; color: #0a0c0b; display: flex; flex-direction: column; align-items: center; gap: 9px; padding-top: 28px; animation-delay: .19s">
+        <b style="font-size: 46px; font-weight: 900; letter-spacing: -.04em; line-height: 1">M</b>
+        <span style="font-size: 10.4px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em">MUM</span>
+      </div>
+      <div class="rise" style="position: relative; z-index: 1; flex: 0 0 auto; width: 156px; height: 323px; margin-top: 60px; margin-left: -26px; background: #848a84; border-radius: 78px 78px 10px 10px; color: #0a0c0b; display: flex; flex-direction: column; align-items: center; gap: 9px; padding-top: 28px; animation-delay: .3s">
+        <b style="font-size: 40px; font-weight: 900; letter-spacing: -.04em; line-height: 1">D</b>
+        <span style="font-size: 10.4px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em">DAD</span>
+      </div>
+      <div class="rise" style="position: relative; z-index: 6; flex: 0 0 auto; width: 178px; height: 368px; margin-top: 45px; margin-left: -26px; background: #8e948e; border-radius: 89px 89px 10px 10px; color: #0a0c0b; display: flex; flex-direction: column; align-items: center; gap: 9px; padding-top: 28px; animation-delay: .19s">
+        <b style="font-size: 46px; font-weight: 900; letter-spacing: -.04em; line-height: 1">S</b>
+        <span style="font-size: 10.4px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em">SARAH</span>
+      </div>
+      <div class="rise" style="position: relative; z-index: 11; flex: 0 0 auto; width: 200px; height: 414px; margin-top: 30px; margin-left: -26px; background: #d7d8cf; border-radius: 100px 100px 10px 10px; color: #0a0c0b; display: flex; flex-direction: column; align-items: center; gap: 9px; padding-top: 28px; animation-delay: .08s">
+        <b style="font-size: 52px; font-weight: 900; letter-spacing: -.04em; line-height: 1">A</b>
+        <span style="font-size: 10.4px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em">ALEX</span>
+      </div>
+    </div>
+
+    <div style="position: absolute; inset: 0 0 auto; height: 470px; z-index: 1; background: linear-gradient(180deg, rgba(10,12,11,0) 0%, rgba(10,12,11,.10) 20%, rgba(10,12,11,.70) 38%, #0a0c0b 49%)"></div>
+
+    <div style="position: relative; z-index: 2; text-align: center">
+
+      <p class="rise" style="margin: 0 0 26px; font-size: 11px; font-weight: 800; letter-spacing: .13em; color: #a5aaa4; animation-delay: .45s">RUN MY FIRST HALF MARATHON &middot; KEPT 30 JUNE</p>
+
+      <h1 class="rise" style="margin: 0 0 24px; font-size: 192px; line-height: .77; letter-spacing: -.08em; font-weight: 900; animation-delay: .55s">JASON DID IT<span class="signal" style="color: #c8ff32; display: inline-block">.</span></h1>
+
+      <p class="rise" style="margin: 0 0 52px; font-size: 34px; font-weight: 700; letter-spacing: -.03em; animation-delay: .7s">You were behind him.</p>
+
+      <strong class="rise" style="display: block; color: #c8ff32; font-size: 160px; line-height: .8; letter-spacing: -.08em; font-weight: 900; animation-delay: .8s">$250</strong>
+      <span class="rise" style="display: block; margin-top: 12px; font-size: 24px; font-weight: 750; letter-spacing: -.02em; animation-delay: .88s">Your backing, released.</span>
+
+      <p class="rise" style="margin: 34px auto 0; max-width: 620px; font-size: 15px; line-height: 1.55; color: #a5aaa4; animation-delay: .96s">You were one of five people behind him, $1,100 in all. He ran it in 2:04:37 on 30 June, twelve days before his deadline.</p>
+
+    </div>
+  </main>
+
+  <section style="background: #f4f3ed; color: #0a0c0b; padding: 92px 84px">
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 60px">
+      <div>
+        <p style="margin: 0 0 22px; font-size: 11px; font-weight: 800; letter-spacing: .13em; color: #555a55">THE PART THAT KEEPS GOING</p>
+        <h2 style="margin: 0; font-size: 104px; line-height: .84; letter-spacing: -.07em; font-weight: 900; max-width: 900px; text-wrap: pretty">WHO WILL YOU BACK NEXT<span style="color: #c8ff32">?</span></h2>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 22px; max-width: 320px">
+        <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #555a55">Someone you know is one push away from starting. It takes a minute.</p>
+        <button style="min-height: 58px; padding: 0 22px; display: inline-flex; align-items: center; justify-content: space-between; gap: 42px; font-weight: 850; font-size: 12.5px; letter-spacing: .05em; border: 1px solid #0a0c0b; background: #c8ff32; color: #0a0c0b; font-family: inherit; cursor: pointer; width: 100%">
+          BACK SOMEONE
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="flex-shrink: 0">
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <polyline points="13 5 20 12 13 19" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+</body>
+</html>
