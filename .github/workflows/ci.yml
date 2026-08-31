@@ -46,7 +46,7 @@ jobs:
           echo "ADMIN_TOKEN=$ADMIN_TOKEN" >> .dev.vars
       - name: Start vinext dev in background
         run: nohup npm run dev > vinext-dev.log 2>&1 &
-      - run: npx wait-on http://127.0.0.1:3000 --timeout 60000
+      - run: npx wait-on http://127.0.0.1:3000 --timeout 180000
       - run: npm run a11y:audit
       - name: Show vinext dev log on failure
         if: failure()
