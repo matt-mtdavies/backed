@@ -73,8 +73,22 @@ export function AdminTokenGate({ onSubmit, message }: { onSubmit: (token: string
         <h1>ADMIN ACCESS<span>.</span></h1>
         {message && <p className="formError" role="alert">{message}</p>}
         <label>
+          {/* Plain text, not type="password": this is a shared admin secret typed by
+              its own holder, not a login masking output from someone else's view.
+              Masking it made a mistyped character on a phone keyboard impossible to
+              catch before submitting, which is what caused repeated real failures. */}
           ADMIN TOKEN
-          <input ref={inputRef} type="password" value={value} onChange={(event) => setValue(event.target.value)} />
+          <input
+            ref={inputRef}
+            type="text"
+            inputMode="text"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            value={value}
+            onChange={(event) => setValue(event.target.value)}
+          />
         </label>
         <button className="button primary" type="submit" disabled={!value.trim()}>CONTINUE</button>
       </form>
