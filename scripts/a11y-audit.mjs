@@ -1,12 +1,22 @@
 // Runs axe-core against the app's core pages and prints violations. Requires a
 // running server (npm run dev / vinext start) at BASE_URL, seeded with at
-// least the demo scenario (db/seed.sql). Not wired into CI yet — CI would
-// need a Postgres service container and a migrated+seeded database first;
-// run this locally against `npm run dev` until that infra exists.
+// least the demo scenario (db/seed.sql). Wired into CI (.github/workflows/ci.yml,
+// the `a11y` job) against a real Postgres service container, migrated and
+// seeded fresh on every run. Set ADMIN_TOKEN to also cover the admin pages.
+import { existsSync } from "node:fs";
 import { chromium } from "playwright";
 import AxeBuilder from "@axe-core/playwright";
 
-const BASE = process.env.BASE_URL ?? "http://127.0.0.1:3000";
+// vinext dev's Node HTTP listener binds to whatever `dns.lookup("localhost")`
+// returns for this host, which some runners (this repo's GitHub Actions
+// runner included) resolve to the IPv6 loopback [::1] only, not 127.0.0.1 —
+// so default to "localhost", not the IPv4 literal, or connections are refused.
+const BASE = process.env.BASE_URL ?? "http://localhost:3000";
+// Some sandboxes pre-install Chromium outside Playwright's normal cache dir.
+// Use it when present; otherwise fall back to Playwright's own resolution
+// (what `npx playwright install` sets up in CI).
+const SANDBOX_CHROMIUM = "/opt/pw-browsers/chromium";
+const launchOptions = existsSync(SANDBOX_CHROMIUM) ? { executablePath: SANDBOX_CHROMIUM } : {};
 
 const pages = [
   { name: "landing", path: "/" },
@@ -20,7 +30,7 @@ const pages = [
   { name: "admin-token-gate", path: "/admin/proofs" },
 ];
 
-const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+const browser = await chromium.launch(launchOptions);
 const context = await browser.newContext();
 const page = await context.newPage();
 let totalViolations = 0;

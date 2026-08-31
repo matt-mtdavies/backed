@@ -22,3 +22,4 @@ than a mistake.
 | [0012](0012-alpha-release-records-provider-event-not-custody.md) | Alpha release records provider event, not custody |
 | [0013](0013-shared-secret-gate-for-admin-actions.md) | Gate admin actions behind a shared secret, not real auth |
 | [0014](0014-exercise-new-routes-against-real-postgres-before-merge.md) | Exercise new routes against real Postgres before merging, not just unit tests |
+| [0015](0015-ci-runs-a11y-audit-against-real-postgres.md) | CI runs the accessibility audit against a real Postgres service container |

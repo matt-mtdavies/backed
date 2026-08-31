@@ -17,7 +17,11 @@ Use `npm run check` for type checking, linting, unit tests, and the production b
 
 The dev server runs on the Cloudflare Workers runtime, so `DATABASE_URL` must reach it as a Worker binding, not as a Next-style env var. Copy `.dev.vars.example` to `.dev.vars` and point it at a Postgres instance to exercise the Back and Invite flows locally; without it, `/api/backs` and invite acceptance fail with "DATABASE_URL is not configured."
 
-Run `npm run db:migrate` (`db/migrations/*.sql` applied in order via `psql "$DATABASE_URL"`) against a fresh database before using the app. Migrations are hand-written, forward-only SQL — `db/schema.ts` is a manually kept-in-sync typed mirror for Drizzle queries, not the source of truth, and `drizzle-kit generate` is not used.
+Run `npm run db:migrate` (`db/migrations/*.sql` applied in order via `psql "$DATABASE_URL"`) against a fresh database before using the app, then `npm run db:seed` to load the demo scenario (`db/seed.sql`) that `npm run a11y:audit` and the app's own demo pages depend on. Migrations are hand-written, forward-only SQL — `db/schema.ts` is a manually kept-in-sync typed mirror for Drizzle queries, not the source of truth, and `drizzle-kit generate` is not used. Neither `db:migrate` nor `db:seed` is idempotent — both expect a fresh database.
+
+## Continuous integration
+
+`.github/workflows/ci.yml` runs two jobs on every PR and push to `main`: `verify` (`npm run check` — typecheck, lint, unit tests, build) and `a11y`, which migrates and seeds a real `postgres:16` service container, starts `vinext dev` against it, and runs `npm run a11y:audit` (real `axe-core` through a real browser, across every core page and several DB-backed interactive states). See [ADR-0015](docs/decisions/0015-ci-runs-a11y-audit-against-real-postgres.md).
 
 ## Architecture
 
