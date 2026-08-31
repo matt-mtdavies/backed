@@ -1,6 +1,6 @@
 # BACKED engineering contract
 
-Read this file before every change. `BACKED_ALPHA_SPEC.md` is the product source of truth, except where an explicit user request supersedes it. Hosting is Cloudflare Workers through Cloudflare’s GitHub integration; never add Vercel configuration or deploy directly from an agent.
+Read this file before every change. `BACKED_MASTER_SPEC.md` is the product, brand and engineering source of truth, except where an explicit user request supersedes it. Hosting is Cloudflare Workers through Cloudflare’s GitHub integration; never add Vercel configuration or deploy directly from an agent.
 
 ## Product principles
 
@@ -16,11 +16,13 @@ All Promise and Back state changes go through service/state-machine functions. N
 
 ## Data and migrations
 
-PostgreSQL is authoritative. Migrations are forward-only, reviewed SQL in `db/migrations`; never edit an applied migration. Use UTC timestamps, UUID primary keys, constraints, and indexes. Production connects from Workers through a managed edge-compatible PostgreSQL provider or Cloudflare Hyperdrive; credentials remain secrets.
+PostgreSQL is authoritative. Migrations are forward-only, reviewed SQL in `db/migrations`; never edit an applied migration. Use UTC timestamps, UUID primary keys, constraints, and indexes. Production connects from Workers through a managed edge-compatible PostgreSQL provider or Cloudflare Hyperdrive; credentials remain secrets. Before assuming a schema or naming choice is a mistake, check `docs/decisions/` — several deliberate, documented exceptions to the rules above already exist there.
 
 ## Quality and delivery
 
 TypeScript is strict. Add focused unit tests for transitions, money, validation, and moderation; integration tests for services; Playwright coverage for core flows as they become live. Run typecheck, lint, unit tests, and build before handoff. The initial bootstrap may go directly to `main`. Every later change uses feature branch → pull request → Cloudflare preview → merge to `main` → production. Never deploy directly from Codex.
+
+`npm run check` passing is necessary but not sufficient for anything touching routing, `next/link`, client components, or the build toolchain (`vinext`, `vite`, `@vitejs/plugin-rsc`, `@cloudflare/vite-plugin`): also run `npm run build && npx vinext start` and drive it with a real click (`page.click`, not `page.goto`) before trusting it. `vinext dev` and the bundled production build exercise genuinely different code paths — one outage already shipped and passed every static check the whole time it was live. See [ADR-0009](docs/decisions/0009-verify-against-production-build-not-just-dev.md).
 
 ## Forbidden scope
 

@@ -1,3 +1,3 @@
 # BACKED Alpha specification
 
-The founder-approved specification supplied for this bootstrap is maintained outside the repository. This checked-in pointer prevents accidental divergence: consult `AGENTS.md` and the founder’s current canonical specification before implementation. The explicit deployment override is Cloudflare Workers via GitHub integration, not Vercel.
+Superseded. The product, brand and engineering source of truth is now `BACKED_MASTER_SPEC.md`, checked into this repository. Consult `AGENTS.md` for the operational engineering contract. The explicit deployment override remains Cloudflare Workers via GitHub integration, not Vercel.
