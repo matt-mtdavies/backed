@@ -4,7 +4,7 @@ import { AddBackingValidationError } from "@/lib/validation/add-backing";
 import { AlphaMockPaymentProvider } from "@/lib/payments/provider";
 import { getDb } from "@/lib/db/client";
 import { createPromiseLookupRepository } from "@/lib/db/add-backing-repositories";
-import { createBackRepository } from "@/lib/db/create-back-repositories";
+import { createBackRepository, createCommitmentRepository } from "@/lib/db/create-back-repositories";
 
 export async function POST(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -15,6 +15,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
       addBacking(slug, input, {
         promises: createPromiseLookupRepository(tx),
         backs: createBackRepository(tx),
+        commitments: createCommitmentRepository(tx),
         payments: new AlphaMockPaymentProvider(),
         analytics: { capture: async () => {} },
         id: () => crypto.randomUUID(),

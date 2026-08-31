@@ -4,8 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { BackedLogo } from "@/components/brand/BackedLogo";
 import { Arrow } from "@/components/icons/Arrow";
+import { AdminTokenGate, useAdminToken } from "@/components/admin/AdminTokenGate";
 
 export function AdminProofReview() {
+  const { token, save } = useAdminToken();
   const [note, setNote] = useState("Official result verified. Promise completed before deadline.");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{ payableBacks: number; reviewedAt: string } | null>(null);
@@ -14,7 +16,7 @@ export function AdminProofReview() {
   async function approve() {
     setBusy(true);
     setError("");
-    const response = await fetch("/api/admin/proofs/30000000-0000-4000-8000-000000000001/approve", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ note }) });
+    const response = await fetch("/api/admin/proofs/30000000-0000-4000-8000-000000000001/approve", { method: "POST", headers: { "content-type": "application/json", "x-admin-token": token ?? "" }, body: JSON.stringify({ note }) });
     const body = await response.json() as { payableBacks?: number; reviewedAt?: string; error?: string };
     setBusy(false);
     if (!response.ok) {
@@ -23,6 +25,9 @@ export function AdminProofReview() {
     }
     setResult({ payableBacks: body.payableBacks ?? 0, reviewedAt: body.reviewedAt ?? new Date().toISOString() });
   }
+
+  if (token === undefined) return null;
+  if (!token) return <AdminTokenGate onSubmit={save}/>;
 
   return <main className="adminProofPage">
     <header><BackedLogo/><span>INTERNAL ALPHA</span></header>

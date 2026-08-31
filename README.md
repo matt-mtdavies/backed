@@ -48,15 +48,6 @@ Read `AGENTS.md` before changing the product. It codifies the Alpha language, sa
 
 ## Known gaps
 
-- **"Make a Promise" is a dead label.** The landing page's secondary CTA
-  links to `/back?mode=promise`, but nothing reads the `mode` query
-  param — it silently drops into the exact same "back someone" flow as
-  the primary CTA (propose someone else's Promise and fund it), not a
-  self-service flow where the achiever creates their own Promise to
-  solicit backers. No such flow exists yet. This is a real, user-facing
-  gap, not a placeholder that's safe to ignore; scope it as a proper
-  feature (own entry flow, own review step, no achiever-contact field)
-  rather than patching the label.
 - **`vinext dev` and `vinext build`+`vinext start` are not
   interchangeable for verification.** See
   [ADR-0009](docs/decisions/0009-verify-against-production-build-not-just-dev.md).
@@ -65,3 +56,19 @@ Read `AGENTS.md` before changing the product. It codifies the Alpha language, sa
   before it's trusted, not just `vinext dev`. This already shipped one
   outage (every navigation link dead in production, fixed by upgrading
   `vinext`) that passed `npm run check` cleanly the whole time.
+- **A route can pass every static check and unit test while never
+  actually touching the database.** See
+  [ADR-0014](docs/decisions/0014-exercise-new-routes-against-real-postgres-before-merge.md).
+  Two routes (Proof submission, Progress posting) shipped with real,
+  well-tested domain services behind them but were never wired to real
+  repositories in the route itself — always using no-op stubs regardless
+  of `DATABASE_URL`. Fixed, but any new mutating route needs a real
+  `curl` + `SELECT` check before merge, not just green tests.
+- **Admin actions are gated by a shared secret, not real per-admin
+  identity.** See
+  [ADR-0013](docs/decisions/0013-shared-secret-gate-for-admin-actions.md).
+  `/admin/proofs` and `/admin/releases` (and their APIs) require the
+  `ADMIN_TOKEN` header/secret, but the actor recorded in
+  `Verification.reviewerUserId` is still a fixed alpha placeholder, not
+  whoever actually holds the token. Replace with real auth when it
+  exists generally, not admin-specific.

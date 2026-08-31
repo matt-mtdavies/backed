@@ -20,3 +20,5 @@ than a mistake.
 | [0010](0010-proof-submission-enters-manual-review-only.md) | Proof submission enters manual review only |
 | [0011](0011-proof-approval-completes-promise-but-does-not-release-backing.md) | Proof approval completes Promise but does not release backing |
 | [0012](0012-alpha-release-records-provider-event-not-custody.md) | Alpha release records provider event, not custody |
+| [0013](0013-shared-secret-gate-for-admin-actions.md) | Gate admin actions behind a shared secret, not real auth |
+| [0014](0014-exercise-new-routes-against-real-postgres-before-merge.md) | Exercise new routes against real Postgres before merging, not just unit tests |

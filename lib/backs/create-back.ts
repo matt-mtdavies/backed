@@ -12,6 +12,9 @@ export interface UserRepository {
 export interface PromiseRepository { insert(record: NewPromiseRecord): Promise<void> }
 export interface BackRepository { insert(record: NewBackRecord): Promise<void> }
 export interface InviteRepository { insert(record: NewInviteRecord): Promise<void> }
+export interface CommitmentRepository {
+  insert(record: { backId: string; provider: string; providerCustomerRef: string; commitmentState: string }): Promise<void>;
+}
 export interface Analytics { capture(event: string, properties: Record<string, unknown>): Promise<void> }
 
 const INVITE_TTL_DAYS = 30;
@@ -21,6 +24,7 @@ type Dependencies = {
   promises: PromiseRepository;
   backs: BackRepository;
   invites: InviteRepository;
+  commitments: CommitmentRepository;
   payments: PaymentProvider;
   analytics: Analytics;
   id: () => string;
@@ -82,6 +86,7 @@ export async function createBack(input: CreateBackInput, deps: Dependencies): Pr
   });
 
   const commitment = await deps.payments.createCommitment({ backId, amountMinor: input.amountMinor, currency: input.currency });
+  await deps.commitments.insert({ backId, provider: "alpha", providerCustomerRef: commitment.providerReference, commitmentState: commitment.state });
 
   const inviteId = deps.id();
   const inviteToken = deps.token();

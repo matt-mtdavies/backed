@@ -3,7 +3,7 @@ import type { CreateBackInput } from "@/lib/backs/model";
 import { AlphaMockPaymentProvider } from "@/lib/payments/provider";
 import { CreateBackValidationError } from "@/lib/validation/create-back";
 import { getDb } from "@/lib/db/client";
-import { createUserRepository, createPromiseRepository, createBackRepository, createInviteWriteRepository } from "@/lib/db/create-back-repositories";
+import { createUserRepository, createPromiseRepository, createBackRepository, createInviteWriteRepository, createCommitmentRepository } from "@/lib/db/create-back-repositories";
 
 const encoder = new TextEncoder();
 const hex = (buffer: ArrayBuffer) => [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -18,6 +18,7 @@ export async function POST(request: Request) {
         promises: createPromiseRepository(tx),
         backs: createBackRepository(tx),
         invites: createInviteWriteRepository(tx),
+        commitments: createCommitmentRepository(tx),
         payments: new AlphaMockPaymentProvider(),
         analytics: { capture: async () => {} },
         id: () => crypto.randomUUID(),

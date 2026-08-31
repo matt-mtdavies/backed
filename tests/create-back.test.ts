@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { createBack } from "../lib/backs/create-back";
 import type { CreateBackInput, NewUserRecord, NewPromiseRecord, NewBackRecord, NewInviteRecord } from "../lib/backs/model";
+import type { CommitmentRepository } from "../lib/backs/create-back";
 import { AlphaMockPaymentProvider } from "../lib/payments/provider";
 import { validateCreateBack } from "../lib/validation/create-back";
 import { resolveCurrency } from "../lib/money/currency";
@@ -14,14 +15,16 @@ function makeDeps(overrides: { existingUser?: { id: string } } = {}) {
   const promises: NewPromiseRecord[] = [];
   const backs: NewBackRecord[] = [];
   const invites: NewInviteRecord[] = [];
+  const commitments: Parameters<CommitmentRepository["insert"]>[0][] = [];
   const capture = vi.fn();
   return {
-    users,promises,backs,invites,capture,
+    users,promises,backs,invites,commitments,capture,
     deps: {
       users: { findByContact: async () => overrides.existingUser ?? null, insert: async (record: NewUserRecord) => { users.push(record) } },
       promises: { insert: async (record: NewPromiseRecord) => { promises.push(record) } },
       backs: { insert: async (record: NewBackRecord) => { backs.push(record) } },
       invites: { insert: async (record: NewInviteRecord) => { invites.push(record) } },
+      commitments: { insert: async (record: Parameters<CommitmentRepository["insert"]>[0]) => { commitments.push(record) } },
       payments: new AlphaMockPaymentProvider(),
       analytics: { capture },
       id: nextId(),
@@ -41,8 +44,8 @@ describe("Create Back validation",()=>{
 describe("currency defaults",()=>{it("prefers profile currency over locale",()=>{expect(resolveCurrency("CAD","en-US")).toBe("CAD")});it("uses locale until a profile exists",()=>{expect(resolveCurrency(undefined,"en-CA")).toBe("CAD");expect(resolveCurrency(undefined,"en-US")).toBe("USD")})});
 
 describe("createBack service",()=>{
-  it("creates a Promise with a structured target, a Back, a hashed invite, and records analytics",async()=>{
-    const { users, promises, backs, invites, capture, deps } = makeDeps();
+  it("creates a Promise with a structured target, a Back, a hashed invite, a persisted commitment, and records analytics",async()=>{
+    const { users, promises, backs, invites, commitments, capture, deps } = makeDeps();
     const result = await createBack(valid, deps);
     expect(result).toMatchObject({ backId:"id-3", inviteId:"id-4", state:"proposed", commitmentReference:"alpha_id-3" });
     expect(users[0]).toMatchObject({ id:"id-1", email:"jason@example.com", firstName:"Jason" });
@@ -50,6 +53,7 @@ describe("createBack service",()=>{
     expect(backs[0]).toMatchObject({ id:"id-3", promiseId:"id-2", achieverUserId:"id-1", backerName:"Matthew", state:"proposed" });
     expect(invites[0].tokenHash).toBe("hashed:plain-secret");
     expect(invites[0].tokenHash).not.toBe(result.inviteToken);
+    expect(commitments[0]).toMatchObject({ backId:"id-3", provider:"alpha", providerCustomerRef:"alpha_id-3", commitmentState:"pending" });
     expect(capture).toHaveBeenCalledWith("invite_sent", expect.objectContaining({ amount_minor:10000 }));
   });
   it("reuses an existing user instead of creating a duplicate",async()=>{

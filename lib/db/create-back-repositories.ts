@@ -1,6 +1,6 @@
 import { eq, or, sql } from "drizzle-orm";
-import { users, profiles, promises, backs, invites } from "@/db/schema";
-import type { UserRepository, PromiseRepository, BackRepository, InviteRepository } from "@/lib/backs/create-back";
+import { users, profiles, promises, backs, invites, backingCommitments } from "@/db/schema";
+import type { UserRepository, PromiseRepository, BackRepository, InviteRepository, CommitmentRepository } from "@/lib/backs/create-back";
 import type { DbOrTx } from "./tx";
 
 export function createUserRepository(db: DbOrTx): UserRepository {
@@ -56,6 +56,19 @@ export function createBackRepository(db: DbOrTx): BackRepository {
         currency: record.currency,
         message: record.message,
         state: record.state,
+      });
+    },
+  };
+}
+
+export function createCommitmentRepository(db: DbOrTx): CommitmentRepository {
+  return {
+    async insert(record) {
+      await db.insert(backingCommitments).values({
+        backId: record.backId,
+        provider: record.provider,
+        providerCustomerRef: record.providerCustomerRef,
+        commitmentState: record.commitmentState,
       });
     },
   };

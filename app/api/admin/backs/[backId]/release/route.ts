@@ -2,8 +2,10 @@ import { AlphaMockPaymentProvider } from "@/lib/payments/provider";
 import { BackNotReleasableError, releaseBacking } from "@/lib/releases/release-backing";
 import { getDb } from "@/lib/db/client";
 import { createBackingCommitmentReleaseRepository, createReleasableBackRepository, createReleasePaymentEventRepository } from "@/lib/db/release-backing-repositories";
+import { isAuthorizedAdmin } from "@/lib/auth/admin";
 
-export async function POST(_request: Request, { params }: { params: Promise<{ backId: string }> }) {
+export async function POST(request: Request, { params }: { params: Promise<{ backId: string }> }) {
+  if (!isAuthorizedAdmin(request)) return Response.json({ error: "Unauthorized." }, { status: 401 });
   try {
     const { backId } = await params;
     if (!process.env.DATABASE_URL) {
