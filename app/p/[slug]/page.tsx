@@ -8,6 +8,7 @@ import { getDb } from "@/lib/db/client";
 import { createPromiseViewRepository } from "@/lib/db/get-promise-repositories";
 import { currencySymbol } from "@/lib/money/currency";
 import { toneForIndex, relativeDaysAgoLabel } from "@/lib/promises/wall-presentation";
+import { Arrow } from "@/components/icons/Arrow";
 import Link from "next/link";
 
 const NOT_YET_LIVE_STATES = new Set(["proposed", "declined", "expired", "cancelled_by_admin"]);
@@ -36,7 +37,7 @@ export default async function PromisePage({ params }: { params: Promise<{ slug: 
 
   if (slug === demoPromise.slug) {
     const p = demoPromise;
-    return <main className="promisePage"><header className="promiseNav"><BackedLogo/><span>JASON’S PROMISE</span></header><section className="promiseHero"><p className="eyebrow">RUNNING · JUNE 30</p><h1>RUN MY FIRST<br/>HALF MARATHON</h1><div className="promiseStats"><div><strong>${p.total.toLocaleString()}</strong><span>behind Jason.</span></div><div className="progressRing" aria-label={`${p.progress}% progress`}><b>{p.progress}%</b><span>PROGRESS</span></div></div><p className="beliefCount"><b>{p.backers.length} people</b> are behind Jason.</p><Link className="button primary stickyCta" href={`/p/${p.slug}/back`}>GET BEHIND JASON <span>↗</span></Link></section><WallOfBelief achieverName="Jason" backers={p.backers.map((backer) => ({ name: backer.name, amountLabel: `$${backer.amount}`, message: backer.message, tone: backer.tone, agoLabel: "BACKED 42 DAYS AGO." }))}/><section className="updates"><p className="eyebrow">THE WORK</p>{p.updates.map((update,index)=><article key={update}><span>0{index+1}</span><h2>{update}</h2><small>{index===0?"10.0 KM · 54:12":"18.2 KM · 1:44:23"}</small></article>)}</section></main>;
+    return <main className="promisePage"><header className="promiseNav"><BackedLogo/><span>JASON’S PROMISE</span></header><section className="promiseHero"><p className="eyebrow">RUNNING · JUNE 30</p><h1>RUN MY FIRST<br/>HALF MARATHON</h1><div className="promiseStats"><div><strong>${p.total.toLocaleString()}</strong><span>behind Jason.</span></div><div className="progressRing" aria-label={`${p.progress}% progress`}><b>{p.progress}%</b><span>PROGRESS</span></div></div><p className="beliefCount"><b>{p.backers.length} people</b> are behind Jason.</p><Link className="button primary stickyCta" href={`/p/${p.slug}/back`}>GET BEHIND JASON <Arrow direction="ne"/></Link></section><WallOfBelief achieverName="Jason" backers={p.backers.map((backer) => ({ name: backer.name, amountLabel: `$${backer.amount}`, message: backer.message, tone: backer.tone, agoLabel: "BACKED 42 DAYS AGO." }))}/><section className="updates"><p className="eyebrow">THE WORK</p>{p.updates.map((update,index)=><article key={update}><span>0{index+1}</span><h2>{update}</h2><small>{index===0?"10.0 KM · 54:12":"18.2 KM · 1:44:23"}</small></article>)}</section></main>;
   }
 
   const promise = await getPromiseBySlug(slug, { promises: createPromiseViewRepository(getDb()) });
@@ -60,7 +61,7 @@ export default async function PromisePage({ params }: { params: Promise<{ slug: 
         <div><strong>{currencySymbol(promise.currency)}{total.toLocaleString()}</strong><span>behind {promise.achieverName}.</span></div>
       </div>
       <p className="beliefCount"><b>{promise.backers.length} {promise.backers.length === 1 ? "person" : "people"}</b> {promise.backers.length === 1 ? "is" : "are"} behind {promise.achieverName}.</p>
-      <Link className="button primary stickyCta" href={`/p/${slug}/back`}>GET BEHIND {promise.achieverName.toUpperCase()} <span>↗</span></Link>
+      <Link className="button primary stickyCta" href={`/p/${slug}/back`}>GET BEHIND {promise.achieverName.toUpperCase()} <Arrow direction="ne"/></Link>
     </section>
     <WallOfBelief achieverName={promise.achieverName} backers={wallBackers}/>
   </main>;
