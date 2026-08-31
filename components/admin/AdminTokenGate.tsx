@@ -25,7 +25,9 @@ function getServerSnapshot() {
 // real client snapshot right after mount, with no synchronous setState-in-effect.
 export function useAdminToken() {
   const stored = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const [written, setWritten] = useState<string | null>(null);
+  // `null` here means "explicitly overridden" (saved or cleared this render),
+  // taking precedence over `stored`; `undefined` means "no override yet."
+  const [override, setOverride] = useState<string | null | undefined>(undefined);
 
   const save = (value: string) => {
     try {
@@ -33,13 +35,25 @@ export function useAdminToken() {
     } catch {
       // ignore — the token still works for this render via state
     }
-    setWritten(value);
+    setOverride(value);
   };
 
-  return { token: written ?? stored, save };
+  // A wrong token has no visible symptom until an admin action 401s — at
+  // that point the only way back for someone who can't easily clear site
+  // data (a phone, mainly) is for the app to clear it and re-prompt itself.
+  const clear = () => {
+    try {
+      sessionStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+    setOverride(null);
+  };
+
+  return { token: override === undefined ? stored : override, save, clear };
 }
 
-export function AdminTokenGate({ onSubmit }: { onSubmit: (token: string) => void }) {
+export function AdminTokenGate({ onSubmit, message }: { onSubmit: (token: string) => void; message?: string }) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -57,6 +71,7 @@ export function AdminTokenGate({ onSubmit }: { onSubmit: (token: string) => void
       >
         <p className="eyebrow">INTERNAL ALPHA</p>
         <h1>ADMIN ACCESS<span>.</span></h1>
+        {message && <p className="formError" role="alert">{message}</p>}
         <label>
           ADMIN TOKEN
           <input ref={inputRef} type="password" value={value} onChange={(event) => setValue(event.target.value)} />
