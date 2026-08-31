@@ -7,11 +7,12 @@ import { Arrow } from "@/components/icons/Arrow";
 import { AdminTokenGate, useAdminToken } from "@/components/admin/AdminTokenGate";
 
 export function AdminProofReview() {
-  const { token, save } = useAdminToken();
+  const { token, save, clear } = useAdminToken();
   const [note, setNote] = useState("Official result verified. Promise completed before deadline.");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{ payableBacks: number; reviewedAt: string } | null>(null);
   const [error, setError] = useState("");
+  const [gateMessage, setGateMessage] = useState("");
 
   async function approve() {
     setBusy(true);
@@ -20,6 +21,11 @@ export function AdminProofReview() {
     const body = await response.json() as { payableBacks?: number; reviewedAt?: string; error?: string };
     setBusy(false);
     if (!response.ok) {
+      if (response.status === 401) {
+        setGateMessage("That token didn’t work. Try again.");
+        clear();
+        return;
+      }
       setError(body.error ?? "Proof could not be approved.");
       return;
     }
@@ -27,7 +33,7 @@ export function AdminProofReview() {
   }
 
   if (token === undefined) return null;
-  if (!token) return <AdminTokenGate onSubmit={save}/>;
+  if (!token) return <AdminTokenGate onSubmit={save} message={gateMessage}/>;
 
   return <main className="adminProofPage">
     <header><BackedLogo/><span>INTERNAL ALPHA</span></header>

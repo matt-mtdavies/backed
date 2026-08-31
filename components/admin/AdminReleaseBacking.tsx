@@ -7,10 +7,11 @@ import { Arrow } from "@/components/icons/Arrow";
 import { AdminTokenGate, useAdminToken } from "@/components/admin/AdminTokenGate";
 
 export function AdminReleaseBacking() {
-  const { token, save } = useAdminToken();
+  const { token, save, clear } = useAdminToken();
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{ providerReference: string; releasedAt: string } | null>(null);
   const [error, setError] = useState("");
+  const [gateMessage, setGateMessage] = useState("");
 
   async function release() {
     setBusy(true);
@@ -19,6 +20,11 @@ export function AdminReleaseBacking() {
     const body = await response.json() as { providerReference?: string; releasedAt?: string; error?: string };
     setBusy(false);
     if (!response.ok) {
+      if (response.status === 401) {
+        setGateMessage("That token didn’t work. Try again.");
+        clear();
+        return;
+      }
       setError(body.error ?? "Backing could not be released.");
       return;
     }
@@ -26,7 +32,7 @@ export function AdminReleaseBacking() {
   }
 
   if (token === undefined) return null;
-  if (!token) return <AdminTokenGate onSubmit={save}/>;
+  if (!token) return <AdminTokenGate onSubmit={save} message={gateMessage}/>;
 
   return <main className="adminReleasePage">
     <header><BackedLogo/><span>INTERNAL ALPHA</span></header>
