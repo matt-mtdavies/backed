@@ -18,6 +18,14 @@ them by the `design` skill's `seed-canvas.mjs`; that seeded ~2.4 MB file is
 generated output and is gitignored. To change the canvas, edit these files,
 re-seed, and republish to the same artifact URL.
 
+Geist is embedded in each artboard as a base64 `woff2` data URI (the latin
+subset lifted from the app's own build output, variable weight 100–900) rather
+than linked from `fonts.googleapis.com`. This is not a stylistic choice: a
+render-blocking external stylesheet gates the artboard's mount inside its
+sandboxed iframe, and the canvas hung on "Loading artboard…" until it resolved
+— measured at 17.8s with the link versus 4.9s without. Keep webfonts embedded
+here; don't reintroduce a `<link>`.
+
 Values are lifted from `app/globals.css` rather than re-invented — the
 `.portrait` shape and tones, the moment anatomy shared by `.acceptMoment` /
 `.proofSubmitted`, the `.button` metrics, Geist, and the traced `BackedMark`
