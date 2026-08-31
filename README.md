@@ -45,3 +45,23 @@ Enable non-production branch builds so every pull request receives a Cloudflare 
 The first empty-repository bootstrap is the sole direct push to `main`. Afterwards use feature branch → GitHub PR → Cloudflare preview → merge to `main` → production.
 
 Read `AGENTS.md` before changing the product. It codifies the Alpha language, safety, state-machine, migration, testing, and delivery constraints.
+
+## Known gaps
+
+- **"Make a Promise" is a dead label.** The landing page's secondary CTA
+  links to `/back?mode=promise`, but nothing reads the `mode` query
+  param — it silently drops into the exact same "back someone" flow as
+  the primary CTA (propose someone else's Promise and fund it), not a
+  self-service flow where the achiever creates their own Promise to
+  solicit backers. No such flow exists yet. This is a real, user-facing
+  gap, not a placeholder that's safe to ignore; scope it as a proper
+  feature (own entry flow, own review step, no achiever-contact field)
+  rather than patching the label.
+- **`vinext dev` and `vinext build`+`vinext start` are not
+  interchangeable for verification.** See
+  [ADR-0009](docs/decisions/0009-verify-against-production-build-not-just-dev.md).
+  A change that touches routing, `next/link`, client components, or the
+  build toolchain must be click-tested against a real production build
+  before it's trusted, not just `vinext dev`. This already shipped one
+  outage (every navigation link dead in production, fixed by upgrading
+  `vinext`) that passed `npm run check` cleanly the whole time.

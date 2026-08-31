@@ -16,3 +16,4 @@ than a mistake.
 | [0006](0006-achiever-backer-rename-in-place.md) | Achiever/Backer terminology rename, applied in-place to migrations 0001–0002 |
 | [0007](0007-structured-targets-without-progress-computation.md) | Structured target fields added; progress computation deliberately deferred |
 | [0008](0008-trace-backed-mark-as-real-svg.md) | Trace the primary B mark as a real SVG component, not CSS bars |
+| [0009](0009-verify-against-production-build-not-just-dev.md) | Verify navigation/interaction against `vinext build` + `vinext start`, not just `vinext dev` |
