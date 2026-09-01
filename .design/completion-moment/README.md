@@ -27,9 +27,19 @@ sandboxed iframe, and the canvas hung on "Loading artboard…" until it resolved
 here; don't reintroduce a `<link>`.
 
 Values are lifted from `app/globals.css` rather than re-invented — the
-`.portrait` shape and tones, the moment anatomy shared by `.acceptMoment` /
+`.portrait` tones, the moment anatomy shared by `.acceptMoment` /
 `.proofSubmitted`, the `.button` metrics, Geist, and the traced `BackedMark`
 and `Arrow` SVGs. Content uses the real `db/seed.sql` demo scenario (Jason,
 $1,100, five named backers); the finish-time detail in the backer view is
 placeholder copy, and totals beyond five backers are extrapolated to drive
 the crowd-size lever.
+
+One deliberate departure from `.portrait`: the crowd here is overlapping
+circular portraits, not the live Wall of Belief's domed-rectangle pillars.
+Tried matching `.portrait` first and it read as a row of headstones — the
+domed top on a straight-sided slab standing in a row, independent of the
+flat-bottom/rounded-bottom question (the base is hidden under the scrim
+either way). Circles, depth-ordered and overlapping, don't have that
+problem. The live `.portrait` shape (`components/wall/WallOfBelief.tsx`,
+`app/globals.css`) has the same silhouette and hasn't been touched — that's
+shipped product code, a separate decision from this canvas.
