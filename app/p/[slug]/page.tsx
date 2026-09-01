@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { demoPromise } from "@/lib/demo";
 import { BackedLogo } from "@/components/brand/BackedLogo";
 import { WallOfBelief } from "@/components/wall/WallOfBelief";
+import { CompletionMoment } from "@/components/promise/CompletionMoment";
 import { getPromiseBySlug } from "@/lib/promises/get-promise";
 import { getDb } from "@/lib/db/client";
 import { createPromiseViewRepository } from "@/lib/db/get-promise-repositories";
@@ -54,15 +55,26 @@ export default async function PromisePage({ params }: { params: Promise<{ slug: 
 
   return <main className="promisePage">
     <header className="promiseNav"><BackedLogo/><span>{promise.achieverName.toUpperCase()}’S PROMISE</span></header>
-    <section className="promiseHero">
-      <p className="eyebrow">{promise.targetLabel ? promise.targetLabel.toUpperCase() : "PROMISE"} · {promise.deadline.toUpperCase()}</p>
-      <h1>{promise.title.toUpperCase()}</h1>
-      <div className="promiseStats">
-        <div><strong>{currencySymbol(promise.currency)}{total.toLocaleString()}</strong><span>behind {promise.achieverName}.</span></div>
-      </div>
-      <p className="beliefCount"><b>{promise.backers.length} {promise.backers.length === 1 ? "person" : "people"}</b> {promise.backers.length === 1 ? "is" : "are"} behind {promise.achieverName}.</p>
-      <Link className="button primary stickyCta" href={`/p/${slug}/back`}>GET BEHIND {promise.achieverName.toUpperCase()} <Arrow direction="ne"/></Link>
-    </section>
+    {promise.state === "completed" ? (
+      <CompletionMoment
+        achieverName={promise.achieverName}
+        title={promise.title}
+        totalAmountMinor={promise.totalAmountMinor}
+        currency={promise.currency}
+        backers={promise.backers.map((backer) => ({ name: backer.name, amountMinor: backer.amountMinor }))}
+        allBackingReleased={promise.allBackingReleased}
+      />
+    ) : (
+      <section className="promiseHero">
+        <p className="eyebrow">{promise.targetLabel ? promise.targetLabel.toUpperCase() : "PROMISE"} · {promise.deadline.toUpperCase()}</p>
+        <h1>{promise.title.toUpperCase()}</h1>
+        <div className="promiseStats">
+          <div><strong>{currencySymbol(promise.currency)}{total.toLocaleString()}</strong><span>behind {promise.achieverName}.</span></div>
+        </div>
+        <p className="beliefCount"><b>{promise.backers.length} {promise.backers.length === 1 ? "person" : "people"}</b> {promise.backers.length === 1 ? "is" : "are"} behind {promise.achieverName}.</p>
+        <Link className="button primary stickyCta" href={`/p/${slug}/back`}>GET BEHIND {promise.achieverName.toUpperCase()} <Arrow direction="ne"/></Link>
+      </section>
+    )}
     <WallOfBelief achieverName={promise.achieverName} backers={wallBackers}/>
   </main>;
 }

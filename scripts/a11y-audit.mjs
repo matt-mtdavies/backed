@@ -23,6 +23,7 @@ const pages = [
   { name: "back-flow-step0", path: "/back" },
   { name: "promise-demo", path: "/p/jason-first-half" },
   { name: "promise-back-sheet", path: "/p/jason-first-half/back" },
+  { name: "promise-completed", path: "/p/priya-reading" },
   { name: "invite-pending", path: "/invite/jason-half-demo" },
   { name: "make-a-promise", path: "/promise" },
   { name: "post-progress", path: "/p/jason-first-half/progress/new" },
