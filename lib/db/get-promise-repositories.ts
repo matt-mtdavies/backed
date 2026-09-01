@@ -31,6 +31,7 @@ export function createPromiseViewRepository(db: DbOrTx): PromiseViewRepository {
           currency: backs.currency,
           message: backs.message,
           createdAt: backs.createdAt,
+          state: backs.state,
         })
         .from(backs)
         .innerJoin(promises, eq(backs.promiseId, promises.id))

@@ -17,6 +17,10 @@ export type PromiseView = {
   totalAmountMinor: number;
   currency: SupportedCurrency;
   backers: PromiseBacker[];
+  // Proof approval completes the Promise; releasing each Back's backing is a
+  // separate, later admin action (ADR-0011), so this is only true once every
+  // visible Back has actually been released — never assumed from completion.
+  allBackingReleased: boolean;
 };
 
 export type PromiseHeaderRow = {
@@ -34,6 +38,7 @@ export type PromiseBackerRow = {
   currency: string;
   message: string | null;
   createdAt: Date;
+  state: string;
 };
 
 export interface PromiseViewRepository {
@@ -64,5 +69,6 @@ export async function getPromiseBySlug(slug: string, deps: { promises: PromiseVi
     totalAmountMinor,
     currency,
     backers,
+    allBackingReleased: backerRows.length > 0 && backerRows.every((row) => row.state === "released"),
   };
 }
