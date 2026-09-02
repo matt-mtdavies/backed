@@ -15,7 +15,7 @@ npm run dev
 
 Use `npm run check` for type checking, linting, unit tests, and the production build.
 
-The dev server runs on the Cloudflare Workers runtime, so `DATABASE_URL` must reach it as a Worker binding, not as a Next-style env var. Copy `.dev.vars.example` to `.dev.vars` and point it at a Postgres instance to exercise the Back and Invite flows locally; without it, `/api/backs` and invite acceptance fail with "DATABASE_URL is not configured."
+The dev server runs on the Cloudflare Workers runtime, so `DATABASE_URL` must reach it as a Worker binding, not as a Next-style env var. Copy `.dev.vars.example` to `.dev.vars` and point it at a Postgres instance to exercise the Back and Invite flows locally; without it, `/api/backs` and invite acceptance fail with "DATABASE_URL is not configured." `SUPABASE_URL` and `SUPABASE_ANON_KEY` (from a Supabase project's Settings → API) enable `/login`; without them it redirects straight back to itself instead of reaching Supabase.
 
 Run `npm run db:migrate` (`db/migrations/*.sql` applied in order via `psql "$DATABASE_URL"`) against a fresh database before using the app, then `npm run db:seed` to load the demo scenario (`db/seed.sql`) that `npm run a11y:audit` and the app's own demo pages depend on. Migrations are hand-written, forward-only SQL — `db/schema.ts` is a manually kept-in-sync typed mirror for Drizzle queries, not the source of truth, and `drizzle-kit generate` is not used. Neither `db:migrate` nor `db:seed` is idempotent — both expect a fresh database.
 
@@ -76,3 +76,14 @@ Read `AGENTS.md` before changing the product. It codifies the Alpha language, sa
   `Verification.reviewerUserId` is still a fixed alpha placeholder, not
   whoever actually holds the token. Replace with real auth when it
   exists generally, not admin-specific.
+- **Real sign-in exists but nothing else uses it yet, and the live
+  magic-link round trip is unverified.** See
+  [ADR-0016](docs/decisions/0016-supabase-auth-via-rest-otp-not-sdk-magic-link.md).
+  `/login` and `/me` work against a real Supabase project, but every
+  mutation route (create a Promise, back someone, submit proof) still
+  trusts `backerName` per [ADR-0005](docs/decisions/0005-backer-name-as-identity-bridge.md) —
+  migrating them to real sessions is separate follow-up work. The actual
+  send-a-code-and-verify-it round trip has only been checked up to the
+  network boundary (this development environment cannot reach
+  `supabase.co`); it needs a real click-through against a deployed
+  preview before it's trusted.

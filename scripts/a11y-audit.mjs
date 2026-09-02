@@ -29,6 +29,7 @@ const pages = [
   { name: "post-progress", path: "/p/jason-first-half/progress/new" },
   { name: "submit-proof", path: "/p/jason-first-half/proof" },
   { name: "admin-token-gate", path: "/admin/proofs" },
+  { name: "login", path: "/login" },
 ];
 
 const browser = await chromium.launch(launchOptions);

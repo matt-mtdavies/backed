@@ -23,3 +23,4 @@ than a mistake.
 | [0013](0013-shared-secret-gate-for-admin-actions.md) | Gate admin actions behind a shared secret, not real auth |
 | [0014](0014-exercise-new-routes-against-real-postgres-before-merge.md) | Exercise new routes against real Postgres before merging, not just unit tests |
 | [0015](0015-ci-runs-a11y-audit-against-real-postgres.md) | CI runs the accessibility audit against a real Postgres service container |
+| [0016](0016-supabase-auth-via-rest-otp-not-sdk-magic-link.md) | Supabase Auth via plain REST + email OTP, not the SDK or a clickable magic-link |
