@@ -15,6 +15,20 @@ export interface SupabaseAuthClient {
 
 export class SupabaseAuthError extends Error {}
 
+// GoTrue's error body shape varies by endpoint/version (`msg`, `error_description`,
+// `error_code`/`code`) — pull out whatever's there rather than showing a
+// generic message for everything, since "the account exists but the request
+// still failed" (rate limiting, an unlisted redirect URL, project misconfig)
+// needs a diagnosable reason, not just "try again".
+async function describeError(res: Response, fallback: string): Promise<string> {
+  const body = await res.json().catch(() => null) as { msg?: string; error_description?: string; error_code?: string; code?: string } | null;
+  if (!body) return fallback;
+  if (res.status === 429 || body.error_code === "over_email_send_rate_limit") {
+    return "Too many codes requested for this email. Wait a few minutes and try again.";
+  }
+  return body.msg ?? body.error_description ?? fallback;
+}
+
 export function createSupabaseAuthClient(url: string, anonKey: string): SupabaseAuthClient {
   const base = url.replace(/\/+$/, "");
 
@@ -32,7 +46,7 @@ export function createSupabaseAuthClient(url: string, anonKey: string): Supabase
         headers: { apikey: anonKey, "content-type": "application/json" },
         body: JSON.stringify({ email, create_user: true, ...(redirectTo ? { redirect_to: redirectTo } : {}) }),
       });
-      if (!res.ok) throw new SupabaseAuthError("We couldn't send a sign-in code. Try again.");
+      if (!res.ok) throw new SupabaseAuthError(await describeError(res, "We couldn't send a sign-in code. Try again."));
     },
 
     async verifyOtp(email, token) {
@@ -41,7 +55,7 @@ export function createSupabaseAuthClient(url: string, anonKey: string): Supabase
         headers: { apikey: anonKey, "content-type": "application/json" },
         body: JSON.stringify({ email, token, type: "email" }),
       });
-      if (!res.ok) throw new SupabaseAuthError("That code didn't work. Check it and try again.");
+      if (!res.ok) throw new SupabaseAuthError(await describeError(res, "That code didn't work. Check it and try again."));
       const data = await res.json() as { access_token: string; user: { id: string; email: string | null } };
       return { accessToken: data.access_token, user: { id: data.user.id, email: data.user.email } };
     },
