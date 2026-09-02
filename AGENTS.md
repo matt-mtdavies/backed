@@ -26,6 +26,8 @@ TypeScript is strict. Add focused unit tests for transitions, money, validation,
 
 Any new or changed route that reads or writes the database needs a real `curl` (or click-through) against `vinext dev` with `DATABASE_URL` set, confirmed with a direct `SELECT` — not just a passing HTTP status and green unit tests. Two routes once shipped fully wired-looking unit tests while the route itself silently never touched the database at all; see [ADR-0014](docs/decisions/0014-exercise-new-routes-against-real-postgres-before-merge.md). CI's `a11y` job (a real Postgres service container, migrated, seeded, and audited with `axe-core` on every PR) catches rendering/contrast regressions this way automatically, but not that one — a route that silently never persists still renders a normal-looking page. See [ADR-0015](docs/decisions/0015-ci-runs-a11y-audit-against-real-postgres.md).
 
+Anything that calls out to a real external service (payment provider, Supabase Auth, an email/SMS provider) needs the same discipline, and sometimes can't be fully closed from a given environment — if the network genuinely can't reach the service, verify everything up to that boundary, then say plainly what's still unverified and where the live check has to happen (a Cloudflare preview deployment, a real inbox), rather than shipping code that merely looks plausible. See [ADR-0016](docs/decisions/0016-supabase-auth-via-rest-otp-not-sdk-magic-link.md).
+
 ## Forbidden scope
 
 No discovery feed, leaderboards, points, streaks, badges, public reputation score, AI chatbot, sponsor marketplace, crypto, speculative payment custody, or shame/failure mechanics. Do not introduce heavy animation or WebGL for the Wall of Belief.
