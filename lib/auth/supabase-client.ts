@@ -39,12 +39,17 @@ export function createSupabaseAuthClient(url: string, anonKey: string): Supabase
     // (a real, hit-in-production constraint — see ADR-0016), so the
     // clickable link in the email is the only way in until that's set up.
     // That link only lands somewhere useful if this is an allow-listed
-    // Redirect URL in the Supabase dashboard.
+    // Redirect URL in the Supabase dashboard. GoTrue reads `redirect_to`
+    // as a URL query parameter on this endpoint, not a JSON body field —
+    // confirmed live: putting it in the body gets silently ignored and
+    // GoTrue falls back to the project's Site URL every time.
     async requestOtp(email, redirectTo) {
-      const res = await fetch(`${base}/auth/v1/otp`, {
+      const otpUrl = new URL(`${base}/auth/v1/otp`);
+      if (redirectTo) otpUrl.searchParams.set("redirect_to", redirectTo);
+      const res = await fetch(otpUrl, {
         method: "POST",
         headers: { apikey: anonKey, "content-type": "application/json" },
-        body: JSON.stringify({ email, create_user: true, ...(redirectTo ? { redirect_to: redirectTo } : {}) }),
+        body: JSON.stringify({ email, create_user: true }),
       });
       if (!res.ok) throw new SupabaseAuthError(await describeError(res, "We couldn't send a sign-in code. Try again."));
     },

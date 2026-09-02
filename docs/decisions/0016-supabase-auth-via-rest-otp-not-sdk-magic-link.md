@@ -100,6 +100,14 @@ with a real page load, not a mocked component); the `/api/auth/*` routes
 each hit their real Supabase-network boundary and degrade to a clean error
 response rather than crashing, exactly like the rest of this integration.
 
+One more live-only finding, since this REST API isn't fully documented for
+every field placement: GoTrue's `/auth/v1/otp` reads `redirect_to` as a URL
+**query parameter**, not a JSON body field — putting it in the body (the
+first attempt) is silently ignored, and GoTrue falls back to the project's
+Site URL every time, indistinguishable from a Redirect-URL allow-list
+problem until you've ruled that out. `createSupabaseAuthClient` sends it as
+`?redirect_to=` now.
+
 What is now confirmed, live, against the real project: the code-entry path
 is genuinely blocked for a brand-new project on Supabase's shared/default
 email sender — its "Confirm signup" template is not editable without
