@@ -6,6 +6,14 @@
   "compatibility_flags": ["nodejs_compat"],
   "preview_urls": true,
   "observability": { "enabled": true },
-  "vars": { "APP_URL": "https://backedme.ai", "PAYMENT_PROVIDER": "alpha_mock" },
+  "vars": {
+    "APP_URL": "https://backedme.ai",
+    "PAYMENT_PROVIDER": "alpha_mock",
+    // Supabase's "anon"/"publishable" key is meant to be public — safe
+    // client-side, safe committed here — unlike the service_role key,
+    // which must never go in this file or anywhere in the repo.
+    "SUPABASE_URL": "https://qxridsotppdwhddyhtyc.supabase.co",
+    "SUPABASE_ANON_KEY": "sb_publishable_VybExfU3xvnR5fU0kqIuEQ_ucaAoYMn"
+  },
   "assets": { "binding": "ASSETS", "directory": "./dist/client" }
 }
