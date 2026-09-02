@@ -29,13 +29,26 @@ verifying the integration from here, not on the integration itself.
    client behaves identically under workerd, needs no compatibility
    verification, and is trivial to fake behind an interface in tests
    (`SupabaseAuthClient` in `lib/auth/supabase-client.ts`).
-2. **A 6-digit email OTP code, entered on our own page, not a clickable
-   magic-link.** A link depends on the project's configured Site URL and
-   redirect handling — exactly the kind of project-specific configuration
-   this session cannot inspect or test live given the network block. The
-   OTP-verify endpoint is a plain, documented request/response with no
-   redirect-handling ambiguity. Revisit once a link flow can actually be
-   click-tested against this project.
+2. **A 6-digit email OTP code, entered on our own page — plus a clickable
+   magic-link as a fallback, since the code alone turned out not to be
+   enough.** Originally this shipped as code-only, deferring the link (see
+   "Alternatives considered" below, kept for the record). Live testing
+   against the real project surfaced why that wasn't optional: Supabase's
+   default email templates (used automatically whenever a project hasn't
+   configured its own custom SMTP sender) cannot be edited at all —
+   the dashboard's template editor is read-only until custom SMTP is set
+   up — and the default "Confirm signup"/"Magic Link" templates don't
+   include `{{ .Token }}`, only the link. A closed alpha isn't going to
+   require every tester to set up SMTP first, so the link has to work.
+   `requestOtp` now accepts an optional `redirect_to`, `/api/auth/request-code`
+   points it at `${origin}/auth/callback`, and that route (`AuthCallback`,
+   a client component — the token arrives in the URL fragment, which never
+   reaches the server) posts the token to `/api/auth/session-from-token` to
+   establish the same session cookie the code-entry path builds. Both paths
+   now share `lib/auth/establish-session.ts`. The code-entry UI stays as
+   the primary flow (still faster when a project's template *is* customized
+   to show the code); the link is what actually works today, out of the box,
+   against this project's real, live configuration.
 3. **Session verification round-trips to `/auth/v1/user`, rather than
    verifying a JWT's signature locally.** This works correctly regardless of
    which signing algorithm the project uses (this session could not check),
@@ -62,25 +75,42 @@ verifying the integration from here, not on the integration itself.
   checked live against the real project; the `SupabaseAuthClient` interface
   this ADR establishes makes that swap a single new implementation, not a
   rewrite of anything that calls it.
-- **Full magic-link (click, no code entry).** Better UX, matches
-  `BACKED_MASTER_SPEC.md` §20's literal wording ("magic-link/email-friendly
-  onboarding"). Deferred, not rejected — needs a live click-through this
-  session cannot perform, and this project's redirect/Site-URL
-  configuration cannot be inspected from here either.
+- **Full magic-link (click, no code entry) as the *only* flow, dropping
+  code entry entirely.** Matches `BACKED_MASTER_SPEC.md` §20's literal
+  wording ("magic-link/email-friendly onboarding") most directly. Not
+  taken — code entry stays valuable as the faster path once a project's
+  email templates are customized (custom SMTP), and keeping both means
+  neither path is a single point of failure against a dashboard setting
+  this codebase can't see or control.
 
 ## Consequences
 
-The actual magic-link-email send-and-verify round trip has **not** been
-verified live from this session — everything up to that boundary has (real
-Postgres: user creation, linking an existing seeded row by email, the
-account-hijack-prevention check that a second identity can't relink an
-already-linked account; real rendering: the login form, its graceful
-failure state, the `/me` redirect-when-signed-out). The live pass has to
-happen against a PR's Cloudflare preview deployment, which does have real
-internet access — request a code on the preview URL, check the email,
-confirm sign-in actually lands on `/me`. That is not optional follow-up;
-until it happens, this integration is unverified in the one way that
-actually matters.
+The actual send-and-verify round trip has **not** been verified live from
+this session for either path — this session's sandbox cannot reach
+`supabase.co` at all. Everything up to that boundary has been verified for
+real, for both paths: real Postgres (user creation, linking an existing
+seeded row by email, the account-hijack-prevention check that a second
+identity can't relink an already-linked account, all shared now through
+`establishSession`); real rendering against a real `vinext build` +
+`vinext start` production server per ADR-0009, not just `vinext dev`
+(the login form and its graceful failure state, the `/auth/callback` page's
+three real states — no token, an `error_description` from an
+expired/invalid link, and a token that fails verification — each checked
+with a real page load, not a mocked component); the `/api/auth/*` routes
+each hit their real Supabase-network boundary and degrade to a clean error
+response rather than crashing, exactly like the rest of this integration.
+
+What is now confirmed, live, against the real project: the code-entry path
+is genuinely blocked for a brand-new project on Supabase's shared/default
+email sender — its "Confirm signup" template is not editable without
+custom SMTP configured, and doesn't include `{{ .Token }}`. The link path
+added in this same change doesn't have that dependency; it only needs the
+project's Site URL / Redirect URLs allow-list to include this app's origin,
+which is ordinary Supabase dashboard configuration, not a template edit.
+The actual click-the-link-and-land-on-`/me` round trip still has to happen
+against a PR's Cloudflare preview deployment, which does have real internet
+access. That is not optional follow-up; until it happens, this integration
+is unverified in the one way that actually matters.
 
 This PR only builds the sign-in primitive and one consuming page (`/me`).
 No existing mutation route (`create-promise`, `create-back`, `submit-proof`,

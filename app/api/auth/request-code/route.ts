@@ -9,7 +9,8 @@ export async function POST(request: Request) {
   if (!email || !email.includes("@")) return Response.json({ error: "Enter a valid email." }, { status: 422 });
 
   try {
-    await createSupabaseAuthClient(url, anonKey).requestOtp(email);
+    const redirectTo = `${new URL(request.url).origin}/auth/callback`;
+    await createSupabaseAuthClient(url, anonKey).requestOtp(email, redirectTo);
     return Response.json({ sent: true }, { status: 200 });
   } catch (error) {
     if (error instanceof SupabaseAuthError) return Response.json({ error: error.message }, { status: 502 });

@@ -8,7 +8,7 @@
 export type SupabaseAuthUser = { id: string; email: string | null };
 
 export interface SupabaseAuthClient {
-  requestOtp(email: string): Promise<void>;
+  requestOtp(email: string, redirectTo?: string): Promise<void>;
   verifyOtp(email: string, token: string): Promise<{ accessToken: string; user: SupabaseAuthUser }>;
   getUser(accessToken: string): Promise<SupabaseAuthUser | null>;
 }
@@ -19,11 +19,18 @@ export function createSupabaseAuthClient(url: string, anonKey: string): Supabase
   const base = url.replace(/\/+$/, "");
 
   return {
-    async requestOtp(email) {
+    // `redirectTo` matters even though the code-entry flow never follows a
+    // link itself: Supabase's default email template can't be edited to
+    // surface `{{ .Token }}` without custom SMTP configured on the project
+    // (a real, hit-in-production constraint — see ADR-0016), so the
+    // clickable link in the email is the only way in until that's set up.
+    // That link only lands somewhere useful if this is an allow-listed
+    // Redirect URL in the Supabase dashboard.
+    async requestOtp(email, redirectTo) {
       const res = await fetch(`${base}/auth/v1/otp`, {
         method: "POST",
         headers: { apikey: anonKey, "content-type": "application/json" },
-        body: JSON.stringify({ email, create_user: true }),
+        body: JSON.stringify({ email, create_user: true, ...(redirectTo ? { redirect_to: redirectTo } : {}) }),
       });
       if (!res.ok) throw new SupabaseAuthError("We couldn't send a sign-in code. Try again.");
     },

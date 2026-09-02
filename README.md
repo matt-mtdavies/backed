@@ -77,13 +77,18 @@ Read `AGENTS.md` before changing the product. It codifies the Alpha language, sa
   whoever actually holds the token. Replace with real auth when it
   exists generally, not admin-specific.
 - **Real sign-in exists but nothing else uses it yet, and the live
-  magic-link round trip is unverified.** See
+  round trip (code or link) is unverified.** See
   [ADR-0016](docs/decisions/0016-supabase-auth-via-rest-otp-not-sdk-magic-link.md).
-  `/login` and `/me` work against a real Supabase project, but every
-  mutation route (create a Promise, back someone, submit proof) still
-  trusts `backerName` per [ADR-0005](docs/decisions/0005-backer-name-as-identity-bridge.md) —
+  `/login` and `/me` work against a real Supabase project, and
+  `/auth/callback` supports signing in via the emailed link as well as the
+  on-page code — the link exists because a project on Supabase's default
+  (non-custom-SMTP) email sender can't have its templates edited to show
+  the code at all. Every mutation route (create a Promise, back someone,
+  submit proof) still trusts `backerName` per
+  [ADR-0005](docs/decisions/0005-backer-name-as-identity-bridge.md) —
   migrating them to real sessions is separate follow-up work. The actual
-  send-a-code-and-verify-it round trip has only been checked up to the
-  network boundary (this development environment cannot reach
-  `supabase.co`); it needs a real click-through against a deployed
-  preview before it's trusted.
+  send-and-verify round trip has only been checked up to the network
+  boundary (this development environment cannot reach `supabase.co`); it
+  needs a real click-through against a deployed preview before it's
+  trusted — request a code on the preview's `/login`, and if the email
+  doesn't show a code, click its link instead.
